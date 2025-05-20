@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カードゲーム - メインメニュー</title>
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="styles/model.css">
+    <link rel="stylesheet" href="styles/deck.css">
+    <link rel="stylesheet" href="styles/battle.css">
+    <script src="js/universalModal.js"></script>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="footer-menu">
+            <button class="tab-button" onclick="showTab('home')">📜ホーム</button>
+            <button class="tab-button" onclick="showTab('editDeck')">🃏カード</button>
+            <button class="tab-button" onclick="showTab('battle')">⚔️バトル</button>
+            <button class="tab-button" onclick="showTab('openSettings')">⚙設定</button>
+            <button class="tab-button" onclick="showTab('effects')">📊</button>
+            <button class="tab-button save-button" onclick="exportUserDataToFile()">💾セーブ</button>
+            <!-- <button onclick="openModal()">📊</button> -->
+        </div>
+        <div class="content">
+            <div id="home" class="tab-content">
+                <div id="notification-controls" class="tab-controls">
+                    <!-- 動的にタブが生成されます -->
+                </div>
+                <div id="notification-content" class="notification-tab-content">
+                    <!-- 選択されたタブの内容がここに表示されます -->
+                </div>
+            </div>
+            <div id="editDeck" class="tab-content">
+                <div id="deck-container" class="deck-container">
+                    <!-- デッキ一覧がここに表示されます -->
+                </div>
+            </div>
+            <div id="battle" class="tab-content">
+                <div id="battle-container" class="battle-container">
+                    <!-- デッキ一覧がここに表示されます -->
+                </div>
+            </div>
+            <div id="openSettings" class="tab-content">
+                <div id="settingsVolumeContainer">
+                    <form id="volumeSettingsForm">
+                        <label for="masterVolume">マスターボリューム</label>
+                        <input type="range" id="masterVolume" name="masterVolume" min="0" max="100" value="50">
+                        
+                        <label for="bgmVolume">BGM音量</label>
+                        <input type="range" id="bgmVolume" name="bgmVolume" min="0" max="100" value="50">
+                        
+                        <label for="sfxVolume">効果音(SFX)音量</label>
+                        <input type="range" id="sfxVolume" name="sfxVolume" min="0" max="100" value="50">
+                        
+                        <button id="soundSave" type="submit" onclick="saveVolumeSettings()">保存</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="effects" class="tab-content" style="width: 100%; height: 100%;">
+              <iframe id="effect-iframe" src="animePng.html" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+
+        </div>
+            <!-- <button class="menu-button" onclick="logout()">🚪</button> -->
+    </div>
+
+    <!-- 汎用 モーダル -->
+    <div id="universal-modal" class="u-modal">
+        <div class="u-modal__content">
+            <div class="u-modal__header">
+            <span id="modal-icon" class="u-modal__icon">🪄</span>
+            <h2 id="modal-title" class="u-modal__title">タイトル</h2>
+            <span class="u-modal__close" onclick="closeUniversalModal()">&times;</span>
+            </div>
+            <div id="modal-body" class="u-modal__body">
+            <p>メッセージ</p>
+            <div class="u-modal__table-container">
+                <table class="u-modal__table">
+                <thead>
+                </thead>
+                <tbody>
+                </tbody>
+                </table>
+            </div>
+            </div>
+            <div id="modal-footer" class="u-modal__footer">
+            <button class="u-modal__button" onclick="closeUniversalModal()">閉じる</button>
+            </div>
+        </div>
+    </div>
+    <!-- デッキ作成 モーダル -->
+    <div id="deck-modal" class="modal">
+        <div id="deck-modal-content" class="modal-content">
+            
+            <!-- <span class="close" onclick="showDeckSaveModal()">&times;</span> -->
+            <!-- カードリストや作成UIがここに挿入されます -->
+            <div id="deck-builder" class="deck-builder-container">
+                <!-- 外側タブ：1行目 -->
+                <div id="deck-tabs" class="tab-group">
+                    <button class="tab-button active" onclick="showDeckTab('pool')">カードゲーム</button>
+                    <button class="tab-button" onclick="showDeckTab('deck')">デッキ編集</button>
+                    <button id="open-filter-modal-button" class="tab-button" onclick="openFilterModal()">🔍</button>
+                    <button id="deck-builder-button" class="tab-button" onclick="showDeckSaveModal()">保存</button>
+                </div>
+                <!-- 内側タブ：2行目（カテゴリ切り替え） -->
+                 <!-- <button id="deck-builder-button" class="tab-button" onclick="showDeckSaveModal()">保存</button> -->
+                <!-- カテゴリ選択リスト -->
+                <div class="deck-cost-display">
+                    <p id="deck-counter">デッキ枚数: <span id="deck-cost-summary"></span></p>
+                    <div id="deck-cost-bar" class="cost-bar-horizontal"></div>
+                </div>
+                
+                <!-- 上段：詳細表示 -->
+                <div id="deck-detail-panel">
+                    <div id="deck-detail-name"></div>
+                    <div id="deck-detail-ability"></div>
+                </div>
+
+                <!-- デッキ タブ-->
+                <div id="deck-section" class="section">
+                    <div id="deck-header" class="header">
+                        <div id="deck-overview" class="deck-overview">
+                            <!-- デッキのカード名がここに表示されます -->
+                        </div>
+                    </div>
+                    <div id="deck-pool-list" class="card-list">
+                        <!-- デッキ内のカードが動的に表示されます -->
+                    </div>
+                </div>
+                <!-- カードプール  タブ-->
+                <div id="card-pool-section" class="section">
+                    <div id="card-pool-list" class="card-list">
+                        <!-- カードプールのカードが動的に表示されます -->
+                    </div>
+                </div>
+            </div>
+            
+            
+            
+        </div>
+    </div>
+    
+    <!-- オーバーレイ -->
+    <div id="modal-overlay" class="hidden"></div>
+</body>
+<!-- 🔽 フィルターモーダル本体 -->
+<div id="filter-modal" class="modal-backdrop" style="display: none;">
+  <div class="modal-box">
+    <h3>カードフィルター</h3>
+    <div id="filter-controls">
+      <div class="filter-row">
+        <label for="filter-category-select">カテゴリ:</label>
+        <select id="filter-category-select" onchange="filterCardPool(this.value)">
+          <option value="all">すべて</option>
+          <option value="キャラ">キャラ</option>
+          <option value="施設">施設</option>
+          <option value="スキル">スキル</option>
+          <option value="マジック">マジック</option>
+          <option value="イベント">イベント</option>
+        </select>
+
+        <label for="filter-cost">コスト:</label>
+        <select id="filter-cost" onchange="applyFilters()">
+          <option value="">すべて</option>
+          <option value="0">0</option><option value="1">1</option>
+          <option value="2">2</option><option value="3">3</option>
+          <option value="4">4</option><option value="5">5</option>
+          <option value="6">6</option><option value="7">7</option>
+          <option value="8">8</option><option value="9">9</option>
+          <option value="10">10</option>
+        </select>
+
+        <label for="filter-rarity">レアリティ:</label>
+        <select id="filter-rarity" onchange="applyFilters()">
+          <option value="">すべて</option>
+          <option value="B">B</option>
+          <option value="S">S</option>
+          <option value="G">G</option>
+          <option value="P">P</option>
+          <option value="EX">EX</option>
+        </select>
+      </div>
+
+      <div class="filter-row">
+        <label for="filter-race">種族:</label>
+        <select id="filter-race" onchange="applyFilters()">
+          <option value="">すべて</option>
+        </select>
+
+        <label for="filter-class">クラス:</label>
+        <select id="filter-class" onchange="applyFilters()">
+          <option value="">すべて</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="dialog-buttons">
+      <button onclick="applyFilters(); closeFilterModal()">適用</button>
+      <button onclick="closeFilterModal()">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function openFilterModal() {
+  document.getElementById("filter-modal").style.display = "flex";
+}
+
+function closeFilterModal() {
+  document.getElementById("filter-modal").style.display = "none";
+}
+</script>
+
+</html>
+<script src="js/dashboard.js"></script>
+<script src="js/deck.js"></script>
+<script src="js/p2p.js"></script>
+<script src="js/battle.js"></script>
+<script>
+// ==== 要素禁止エリア =================================================================================
+
+document.addEventListener("touchstart", (e) => {
+    // スワイプリロード検出のために開始時の位置を記録
+    window.startY = e.touches[0].clientY;
+  }, { passive: false });
+  
+document.addEventListener("touchmove", (e) => {
+    const currentY = e.touches[0].clientY;
+
+    // ページの一番上で、下方向へのスワイプ（リロード操作）を検出して防止
+    if (window.scrollY === 0 && currentY > window.startY) {
+        // 実際に下方向へ動いている場合のみリロードを防止
+        if (currentY - window.startY > 13) { // 必要に応じて閾値を調整
+        e.preventDefault(); // スワイプリロードを無効化
+        }
+    }
+}, { passive: false });
+  
+//========================================================================
+
+// 初期履歴追加
+let canExit = false;
+
+window.addEventListener('load', () => {
+  console.log('[load] 履歴数:', history.length);
+  history.pushState({ preventBack: true }, '', '');
+});
+
+window.addEventListener('popstate', () => {
+  console.log('[popstate] fired');
+  console.log('履歴数:', history.length);
+  console.log('location.href:', location.href);
+  console.log('canExit:', canExit);
+  console.log('document.activeElement:', document.activeElement);
+  console.log('visibility:', document.visibilityState);
+
+  if (!canExit) {
+    const confirmBack = confirm('ゲームを終了してもよろしいですか？');
+    if (confirmBack) {
+      canExit = true;
+      history.back();
+    } else {
+      history.pushState({ preventBack: true }, '', '');
+    }
+  }
+});
+
+
+
+</script>

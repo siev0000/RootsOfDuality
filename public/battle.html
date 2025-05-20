@@ -1,0 +1,326 @@
+<!-- マッチングエリア（部屋作成・参加） -->
+<div id="matching-area" style="display:block;" >
+    <div id="matching-options">
+        <button id="create-room-button">部屋を作成</button>
+        <button id="join-room-button">部屋に参加</button>
+    </div>
+
+    <div id="room-info" style="display:block;">
+        <p id="room-id-display"></p>
+        <input type="text" id="room-id-input" placeholder="部屋IDを入力" style="display:none;">
+        <button id="submit-room-button" style="display:none;">入室</button>
+				<button id="cancel-join-button" style="display:none;">戻る</button>
+    </div>
+
+    <div id="matching-status" style="display:none;">
+        <p id="matching-message">相手を待っています...</p>
+    </div>
+
+    <div id="room-ui" style="display:none;" class="room-container">
+
+				<!-- 🔘 ボタン：ホストのみ表示 -->
+				<button id="open-settings-button" style="display:none;">⚙ 対戦設定</button>
+          
+        <div id="room-header" class="room-header">
+            <h2>部屋ID: <span id="room-id-label"></span></h2>
+            <p id="both-ready-notice" style="display:none; color:rgb(255, 225, 0); font-weight:bold;"></p>
+            <button id="exit-room-button">退出する</button>
+        </div>          
+
+
+        <div class="player-section self">
+          <p>名前: <span id="self-name"></span></p>
+          <p>選択デッキ: <span id="self-deck-label">未選択</span></p>
+          <button id="ready-button">準備完了</button>
+        </div>
+      
+        <div class="win-count">
+          <span id="self-win-count">0</span> 勝 VS <span id="opponent-win-count">0</span> 勝
+        </div>
+      
+        <div class="player-section opponent">
+          <p>名前: <span id="opponent-name">？？？</span></p>
+          <p>選択デッキ: <span id="opponent-deck-label">？？？</span></p>
+          <p>状態: <span id="opponent-status">未接続</span></p>
+        </div>
+				
+      </div>      
+</div>
+
+<!-- ⚙ ダイアログ：対戦設定フォーム -->
+<div id="settings-dialog" class="dialog-backdrop" style="display:none;">
+  <div class="dialog-box">
+    <h3>対戦設定（ホスト専用）</h3>
+
+    <label>最大HP: <input type="number" id="setting-maxhp" value="30" min="1"></label><br>
+    <label>初期PP: <input type="number" id="setting-initpp" value="1" min="1"></label><br>
+    <label>毎ターンの追加PP: <input type="number" id="setting-ppgain" value="1" min="0"></label><br>
+    <label>初期手札: <input type="number" id="setting-inithand" value="3" min="1" max="10"></label><br>
+    <label>PP上限: <input type="number" id="setting-maxpp" value="10" min="1"></label><br>
+
+    <label>先行の決定方法:
+      <select id="setting-firstplayer">
+				<option value="random">ランダム</option>
+        <option value="host">ホストが先行</option>
+        <option value="guest">ゲストが先行</option>
+      </select>
+    </label><br>
+		<div class="setting-row">
+			<label for="setting-firstdraw">先行プレイヤーも初期ドローする</label>
+			<input type="checkbox" id="setting-firstdraw" checked>
+		</div>		
+		
+
+    <div class="dialog-buttons">
+      <button id="save-settings-button">保存</button>
+      <button id="close-settings-button">閉じる</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- バトル画面エリア（初期は非表示） -->
+<div id="battle-area"  style="display:none;">
+    <!-- 上部UIバー（敵情報） -->
+    <div id="enemy-ui-wrapper">
+        <!-- メインUIバー -->
+        <div id="enemy-ui-bar">
+            <!-- 左端：EXデッキ -->
+            <div class="left-side">
+                <div class="player-ex-card">
+                    <span class="deck-count">2</span>
+                </div>
+                <div class="player-hand-icon">
+                    <span class="deck-count">4</span>
+                </div>
+            </div>
+        
+            <!-- 中央：アイコン+HP -->
+            <div class="center-side">
+                <div class="icon hp-block enemy-icon">
+                <img src="assets/images/role/default-race.webp" class="player-icon" alt="敵アイコン" onclick="toggleOpponentHandFace()">
+									<div class="hp-badge">
+											<span id="enemy-hp" class="hp-text">20</span>
+									</div>
+                </div>
+            </div>
+        
+            <!-- 右側：捨て札→デッキ -->
+            <div class="right-side">
+                <div class="player-discard-icon">
+                <span class="deck-count">3</span>
+                </div>
+                <div class="player-deck-card">
+                <span class="deck-count">40</span>
+                </div>
+            </div>
+        </div>
+        <!-- PPバー（最上段） -->
+        <div id="enemy-cost-bar">
+            <img src="./assets/images/cost/エネミーコスト.png" class="enemy-pp-icon">
+            <img src="./assets/images/cost/エネミーコスト.png" class="enemy-pp-icon">
+            <img src="./assets/images/cost/ノーコスト.png" class="enemy-pp-icon inactive">
+            <img src="./assets/images/cost/ノーコスト.png" class="enemy-pp-icon inactive">
+            ...
+        </div>
+    </div>
+    
+    <!-- 相手手札 -->
+    <div id="opponent-hand" class="hand-area">
+        <!-- 手札の仮枠（card-placeholderクラスで見た目確認用） -->
+        <div id="opponent-hand-row" class="hand-row"></div>
+    </div>
+    
+    <!-- 相手フィールド -->
+    <div class="field-row enemy-field">
+        <div class="enemy-field-slot" data-pos="p0"></div>
+        <div class="enemy-field-slot" data-pos="p1"></div>
+        <div class="enemy-field-slot" data-pos="p2"></div>
+        <div class="enemy-field-slot" data-pos="p3"></div>
+        <div class="enemy-field-slot" data-pos="p4"></div>
+        <div class="enemy-field-slot" data-pos="p5"></div>
+    </div>
+
+    <div id="turn-change-banner" class="turn-change-banner">ターンチェンジ</div>
+		<div id="turn-indicator" class="turn-fixed-bar">1ターン目 プレイヤー名のターン（先行）</div>
+
+    <!-- 自分フィールド -->
+    <div class="field-row player-field">
+        <div class="player-field-slot" data-pos="p0"></div>
+        <div class="player-field-slot" data-pos="p1"></div>
+        <div class="player-field-slot" data-pos="p2"></div>
+        <div class="player-field-slot" data-pos="p3"></div>
+        <div class="player-field-slot" data-pos="p4"></div>
+        <div class="player-field-slot" data-pos="p5"></div>
+    </div>
+  
+    <!-- カード詳細 -->
+    <div id="card-detail-panel" style="display: none;">
+        <div id="card-detail-cancel">
+          <button onclick="closeCardDetail()">☓</button>
+        </div>
+        <!-- 🔽 タブ切り替えボタン -->
+        <div id="card-detail-tabs">
+            <button class="tab-button active" onclick="switchCardDetailTab('ability', this)">詳細</button>
+            <button class="tab-button" onclick="switchCardDetailTab('enhance', this)">数値</button>
+            <button class="tab-button" onclick="switchCardDetailTab('move', this)">移動</button>
+        </div>
+        <img id="card-detail-img" />
+        <div id="card-detail-name"></div>
+        <div id="card-detail-type"></div>
+        <div id="card-detail-status"></div>
+      
+
+          
+      
+        <!-- 🔽 表示切り替えエリア -->
+        <div id="card-detail-content">
+          <div id="tab-content-ability" class="tab-content active">
+            <div id="card-detail-ability"></div>
+          </div>
+          <div id="tab-content-enhance" class="tab-content">
+            <div class="enhance-controls">
+              <div class="stat-control">
+                <label>HP</label>
+                <button onclick="adjustCardStat('HP', 1)">＋</button>
+                <button onclick="adjustCardStat('HP', -1)">−</button>
+              </div>
+              <div class="stat-control">
+                <label>ATK</label>
+                <button onclick="adjustCardStat('ATK', 1)">＋</button>
+                <button onclick="adjustCardStat('ATK', -1)">−</button>
+              </div>
+            </div>
+          </div>
+          <div id="tab-content-move" class="tab-content">
+            <div id="card-move-options" class="card-move-options"></div>
+          </div>
+        </div>
+      </div>
+       
+      
+      
+    <!-- ↓ここに手札を出す（プレイヤーUIより上にする） -->
+        <!-- ↓表示中のゾーン名を追加 -->
+    <div id="player-zone-label" class="zone-label">手札</div>
+
+    <!-- ↓手札カード表示エリア -->
+    <div id="player-hand" class="hand-area">
+        <div id="hand-row">
+            <div class="card-placeholder"></div>
+            ...
+        </div>
+    </div>
+
+    
+    <!-- 下部UIバー（自分情報） -->
+    <div id="player-ui-wrapper">
+        <!-- PPバー（最上段） -->
+        <div id="player-cost-bar">
+          <img src="./assets/images/cost/プレイヤーコスト.png" class="pp-icon">
+          <img src="./assets/images/cost/プレイヤーコスト.png" class="pp-icon">
+          <img src="./assets/images/cost/プレイヤーコスト.png" class="pp-icon">
+          <img src="./assets/images/cost/プレイヤーコスト.png" class="pp-icon">
+          <!-- 残りはノーコストで非アクティブ -->
+          <img src="./assets/images/cost/ノーコスト.png" class="pp-icon inactive">
+          <img src="./assets/images/cost/ノーコスト.png" class="pp-icon inactive">
+          <img src="./assets/images/cost/ノーコスト.png" class="pp-icon inactive">
+          <img src="./assets/images/cost/ノーコスト.png" class="pp-icon inactive">
+          <img src="./assets/images/cost/ノーコスト.png" class="pp-icon inactive">
+          <img src="./assets/images/cost/ノーコスト.png" class="pp-icon inactive">
+        </div>
+      
+        <!-- メインUIバー -->
+        <div id="player-ui-bar">
+          <!-- 左端：EXデッキ -->
+          <div class="left-side">
+            <div class="player-ex-card">
+              <span class="deck-count">2</span>
+            </div>
+            <div class="player-hand-icon">
+                <span class="deck-count">4</span>
+            </div>
+          </div>
+          
+      
+          <!-- 中央：アイコン+HP -->
+          <div class="center-side">
+            <div class="icon hp-block clickable" id="player-icon-wrapper" onclick="togglePlayerControlPanel()">
+              <img id="player-icon" src="assets/images/role/default-class.webp" alt="自分アイコン" class="player-icon">
+              <div class="hp-badge">
+                <span id="player-hp" class="hp-text">20</span>
+              </div>
+            </div>
+          </div>
+      
+          <!-- 右側：捨て札→デッキ -->
+          <div class="right-side">
+            <div class="player-discard-icon">
+              <span class="deck-count">3</span>
+            </div>
+            <div class="player-deck-card">
+              <span class="deck-count">35</span>
+            </div>
+          </div>
+        </div>
+    </div>
+      
+    
+    <!-- 操作パネル（自分アイコン押下で表示） -->
+    <div id="player-control-panel" class="battle-control-panel" style="display: none;">
+  
+        <!-- タブ切り替え -->
+        <div class="battle-panel-tabs">
+          <button onclick="showBattlePanelTab('card')">📄 カード</button>
+          <button onclick="showBattlePanelTab('pp')">💠 HP&PP</button>
+          <button onclick="showBattlePanelTab('game')"> ゲーム操作</button>
+          <!-- id="test-battle-start" -->
+          <!-- <div onclick="battleStart()" style="text-align:center; margin-top:0.5em;">
+            <small style="color: #ccc;">バトルスタート（テスト）</small>
+          </div> -->
+        </div>
+      
+        <!-- カード操作タブ -->
+        <div id="battle-tab-card" class="battle-panel-tab active">
+            <button onclick="updateCardZoneDisplay('手札')">手札を見る</button>
+            <button onclick="updateCardZoneDisplay('デッキ')">デッキを見る</button>
+            <button onclick="updateCardZoneDisplay('EXデッキ')">EXを見る</button>
+            <button onclick="updateCardZoneDisplay('捨て札')">捨て札</button>            
+        </div>
+      
+        <!-- PP操作タブ -->
+        <div id="battle-tab-pp" class="battle-panel-tab">
+					<button onclick="adjustHP(1)">HP+</button>
+          <button onclick="adjustHP(-1)">HP−</button>
+          <button onclick="adjustPP(1)">PP+</button>
+          <button onclick="adjustPP(-1)">PP−</button>
+        </div>
+
+        <!-- ゲーム操作タブ -->
+        <div id="battle-tab-game" class="battle-panel-tab">
+					<button onclick="checkBattleEnd()">ゲーム終了</button>
+          <button onclick="">test</button>
+        </div>
+
+        <!-- 常時表示：ターン制御 -->
+        <div class="battle-panel-footer">
+          <button onclick="drawCard()">ドローする</button>
+          <button onclick="startTurn()">▶ ターン開始</button>
+          <button onclick="endTurn()">■ ターン終了</button>
+          <button onclick="closeControlPanel()">☓ 閉じる</button>
+        </div>
+    </div>
+      
+    <!-- ターン情報ダイアログ -->
+    <div id="turn-dialog" style="display: none;">
+        <div id="turn-message">○○のターン開始！</div>
+    </div>
+    
+    <!-- カード一覧ダイアログ -->
+    <div id="card-list-dialog" style="display: none;">
+        <div id="card-list-content">カード一覧がここに表示されます</div>
+        <button onclick="closeCardList()">☓ 閉じる</button>
+    </div>
+    
+</div>

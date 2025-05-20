@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>データ読み込み／新規開始</title>
+  <style>
+    body {
+      font-family: 'Fantasy', serif;
+      background-image: url('./assets/images/background-image.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+    .container {
+      width: 90%;
+      max-width: 400px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      text-align: center;
+    }
+    .section {
+      margin-bottom: 2em;
+    }
+    .form input, .form button {
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    .form input {
+      border: 1px solid #333;
+      background: #222;
+      color: #fff;
+    }
+    .form button {
+      background: linear-gradient(45deg, #6a5acd, #483d8b);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .form button:hover {
+      background: linear-gradient(45deg, #483d8b, #6a5acd);
+    }
+    #message {
+      margin-top: 1em;
+      font-size: 0.9em;
+      color: #ffcc00;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>ゲームデータを読み込む</h2>
+    <div class="section form">
+      <input type="file" id="fileInput" accept="application/json">
+      <button onclick="loadFile()">読み込んで開始</button>
+    </div>
+
+    <h3>または</h3>
+
+    <div class="section form">
+      <input type="text" id="usernameInput" placeholder="ユーザー名を入力">
+      <button onclick="startNewGame()">新しくはじめる</button>
+    </div>
+
+    <div id="message"></div>
+  </div>
+
+  <script>
+    function loadFile() {
+      const fileInput = document.getElementById('fileInput');
+      const message = document.getElementById('message');
+
+      if (!fileInput.files[0]) {
+        message.textContent = 'ファイルを選択してください。';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data.username || !data.settings || !Array.isArray(data.decks)) {
+            throw new Error('不正なファイル形式です');
+          }
+          localStorage.setItem('userData', JSON.stringify(data));
+          location.href = 'dashboard.html';
+        } catch (err) {
+          message.textContent = '読み込みに失敗しました：' + err.message;
+        }
+      };
+      reader.readAsText(fileInput.files[0]);
+    }
+
+    async function startNewGame() {
+      const username = document.getElementById('usernameInput').value.trim();
+      const message = document.getElementById('message');
+      if (!username) {
+        message.textContent = 'ユーザー名を入力してください。';
+        return;
+      }
+
+      try {
+        const res = await fetch('data/default_deck.json');
+        const defaultDeck = await res.json();
+        const now = new Date().toISOString();
+
+        const userData = {
+          username: username,
+          userId: generateUUID(),  // ✅ ここを追加！
+          settings: {
+            volume: { master: 50, bgm: 50, sfx: 50 },
+            selectedDeckId: defaultDeck.id
+          },
+          decks: [
+            {
+              _id: generateUUID(),
+              ...defaultDeck,
+              createdAt: now,
+              updatedAt: now,
+              isPublic: false
+            }
+          ]
+        };
+
+        localStorage.setItem('userData', JSON.stringify(userData));
+        location.href = 'dashboard.html';
+      } catch (err) {
+        message.textContent = '初期デッキの読み込みに失敗しました：' + err.message;
+      }
+    }
+    function generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+  </script>
+</body>
+</html>

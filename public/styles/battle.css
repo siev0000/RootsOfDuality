@@ -1,0 +1,1177 @@
+/* バトル画面 */
+#battle {
+  display: none;
+  /* display: block !important; */
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, #2b2b2b, #1a1a1a);
+  color: #ffffff;
+}
+#battle-area {
+  /* display: none; */
+  /* display: block !important; */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, #2b2b2b, #1a1a1a);
+  color: #ffffff;
+}
+
+/* ================================================ */
+/* ルームのUI */
+/* ================================================ */
+.room-container {
+  text-align: center;
+  margin-top: 2em;
+}
+
+.player-section {
+  border: 1px solid #aaa;
+  padding: 1em;
+  margin: 1em auto;
+  width: 90%;
+  max-width: 100%;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+}
+
+.win-count {
+  font-size: 1.2em;
+  margin: 1em;
+}
+#room-ui button {
+  font-size: 1rem;
+  padding: 0.6em 1.2em;
+  margin: 0.5em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#room-ui #select-deck-button {
+  background-color: transparent;
+  border: 2px solid #aaa;
+  color: #ddd;
+}
+
+#room-ui #select-deck-button:hover {
+  background-color: rgba(255,255,255,0.1);
+  border-color: #fff;
+}
+
+#room-ui #ready-button {
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  border: none;
+}
+
+#room-ui #ready-button:hover {
+  background-color: #45a049;
+}
+
+#room-ui #ready-button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+#ready-button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+#room-ui #exit-room-button {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 0.6em 1.2em;
+  border-radius: 8px;
+  margin-top: 1em;
+}
+
+#room-ui #exit-room-button:hover {
+  background-color: #c9302c;
+}
+
+#room-ui .room-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 左右に分ける */
+  gap: 1em;
+  padding: 0.5em 1em;
+}
+
+#room-ui .room-header h2 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+#room-ui #exit-room-button {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 0.4em 0.8em;
+  border-radius: 6px;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+#room-ui #exit-room-button:hover {
+  background-color: #c9302c;
+}
+
+#ready-button.ready-state {
+  background-color: #a5d6a7;
+  color: #333;
+  border: none;
+}
+
+.clickable-icon {
+  cursor: pointer;
+}
+
+/* ====================================================================== */
+/* 部屋へのボタンと入力項目 */
+/* ====================================================================== */
+
+/* ✅ 入力欄の共通スタイル */
+#room-id-input {
+  font-size: 1.1em;
+  padding: 0.5em 1em;
+  margin: 0.5em 0;
+  border: 2px solid #aaa;
+  border-radius: 10px;
+  background-color: #2a2a2a;
+  color: white;
+  width: 80%;
+  max-width: 300px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* プレースホルダー文字の色も調整（モダンブラウザ対応） */
+#room-id-input::placeholder {
+  color: #ccc;
+  font-style: italic;
+}
+
+/* ✅ マッチング系ボタン（共通） */
+#matching-options button,
+#submit-room-button,
+#cancel-join-button {
+  font-size: 1.1em;
+  font-weight: bold;
+  padding: 0.6em 1.4em;
+  margin: 0.5em;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(to bottom, #444, #222);
+  color: #fff;
+  border: 2px solid #aaa;
+  box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* ✅ ホバー時に明るく */
+#matching-options button:hover,
+#submit-room-button:hover,
+#cancel-join-button:hover {
+  background: linear-gradient(to bottom, #666, #333);
+  border-color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ====================================================================== */
+/* 上下バー */
+#opponent-ui-bar, #player-ui-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5em 1em;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  font-size: 0.9em;
+}
+
+.icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.status-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.resource-counts button {
+  margin-left: 0.5em;
+}
+
+/* フィールド・手札 */
+.field{
+  display: flex;
+  justify-content: center;
+  gap: 1%;
+  padding: 0.2em;
+}
+
+#turn-controls {
+  text-align: center;
+  margin: 1em 0;
+}
+
+.battle-button {
+  font-size: 1.2em;
+  padding: 0.5em 1em;
+}
+
+/* 操作パネル ======================================================*/
+/* absolute ではなく fixed にするのがポイント */
+
+/* #player-control-panel {
+  position: fixed; 
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 12%;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid #999;
+  padding: 1em;
+  border-radius: 10px;
+  z-index: 100;
+} */
+
+/* パネル本体（中央表示） */
+.battle-control-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(90vw, 360px);
+  height: 30vh; /* 高さを固定。画面サイズに対して相対 */
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid #aaa;
+  padding: 0.8em;
+  border-radius: 14px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-y: auto; /* ボタンが多すぎるとスクロール */
+  font-family: "Georgia", serif;
+}
+
+/* タブ切り替え */
+.battle-panel-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  margin-bottom: 0.5em;
+}
+.battle-control-panel button {
+  background: linear-gradient(to bottom, #f0e6d2, #b99b6b);
+  border: 1px solid #7d5c3a;
+  border-radius: 8px;
+  padding: 0.5em 0.8em;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #3a2c1d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.battle-control-panel button:hover {
+  background: linear-gradient(to bottom, #b99b6b, #f0e6d2);
+  transform: translateY(-1px);
+}
+/* タブ中身 */
+.battle-panel-tab {
+  display: none; /* 初期は非表示 */
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5em;
+  padding-bottom: 0.5em;
+  height: 12vh;
+}
+
+.battle-panel-tab.active {
+  display: grid; /* タブ切り替え時のみ表示 */
+}
+
+
+/* ボタン（共通） */
+.battle-control-panel button {
+  background: linear-gradient(to bottom, #f0e6d2, #b99b6b);
+  border: 1px solid #7d5c3a;
+  border-radius: 8px;
+  padding: 0.4em 0.6em;
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #3a2c1d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.battle-control-panel button:hover {
+  background: linear-gradient(to bottom, #b99b6b, #f0e6d2);
+  transform: translateY(-1px);
+}
+
+
+/* フッター（ターン操作など） */
+.battle-panel-footer {
+  margin-top: 1em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 0.5em;
+  border-top: 1px solid #666;
+  padding-top: 1em;
+}
+
+/* ================================================ */
+/* テスト用 */
+/* ================================================ */
+
+#test-battle-start {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  z-index: 500;
+  background: linear-gradient(145deg, #444, #222);
+  color: #fff;
+  font-weight: bold;
+  padding: 0.8em 1.5em;
+  border: 2px solid #888;
+  border-radius: 12px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+#test-battle-start:hover {
+  background: linear-gradient(145deg, #666, #333);
+  border-color: #ccc;
+  transform: scale(1.35);
+}
+
+#test-battle-start:active {
+  transform: scale(0.95);
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+/* ======================================================*/
+.turn-fixed-bar {
+  background: #000;
+  color: white;
+  padding: 1em;
+  border-radius: 10px;
+  z-index: 400;
+  font-size: 1.5em;
+  color: white;
+  padding: 1vh 2em;
+  border-radius: 12px;
+  z-index: 1000;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.turn-change-banner {
+  position: fixed;
+  top: 40%;
+  left: -100%;
+  width: 100%;
+  text-align: center;
+  font-size: 3em;
+  font-weight: bold;
+  color: gold;
+  text-shadow: 2px 2px 8px #000;
+  z-index: 9999;
+  pointer-events: none;
+  animation: none;
+}
+
+@keyframes slideAcross {
+  0%   { left: -100%; }
+  50%  { left: 20%; }
+  100% { left: 120%; }
+}
+
+/* ================================================ */
+/* カード詳細パネル */
+/* ================================================ */
+
+/* 位置固定 */
+/* #card-detail-panel {
+  position: fixed;
+  top: 50%;
+  left: 28%;
+  transform: translate(-50%, -50%);
+  width: 45%;
+  max-width: 500px;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 1em;
+  border: 2px solid #aaa;
+  border-radius: 0.5em;
+  z-index: 500;
+  display: none;
+} */
+#card-detail-panel {
+  position: absolute;
+  top: 1%;
+  left: 3%;
+  width: 50%;
+  height: 36%;
+  background-color: rgba(0, 0, 0, 0.6); /* ← 半透明にしてバトル画面が透ける */
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: no-repeat;
+  color: white;
+  border: 2px solid #aaa;
+  border-radius: 10px;
+  z-index: 500;
+  overflow: hidden;
+  font-family: "Georgia", serif;
+  padding: 0.3%;
+  box-sizing: border-box;
+}
+#card-detail-ability {
+  font-size: 0.85em;
+  white-space: pre-wrap;
+  line-height: 1.4;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 0.2em;
+  border-radius: 4px;
+  min-height: 20%;
+  max-height: 40%; /* ← ここを追加！ */
+  overflow-y: auto;
+}
+
+#card-detail-panel {
+  display: none;
+}
+
+.card-selected #card-detail-panel {
+  display: block;
+}
+
+#card-detail-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  z-index: -1;
+  opacity: 0.5; /* ← 画像も少し透かすなら */
+}
+
+#card-detail-name {
+  font-size: clamp(12px, 2vw, 20px);
+  font-weight: bold;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  white-space: normal;
+  word-break: keep-all;
+}
+
+#card-detail-type {
+  font-size: clamp(8px, 1.5vw, 13px);
+  text-align: right;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  white-space: normal;
+  word-break: keep-all;
+}
+
+
+#card-detail-cancel {
+  position: absolute;
+  top: 0%;
+  right: 0%;
+  z-index: 600;
+}
+
+#card-detail-cancel button {
+  background: rgba(255, 255, 255, 0.45);
+  color: black;
+  border: none;
+  font-size: 1em;
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* 通常の移動ボタン用（card-move-options の中） */
+.card-move-options {
+  display: grid;
+  flex-wrap: wrap;
+  gap: 0.6em;
+  justify-content: center;
+  /* margin-top: 0.8em; */
+}
+
+.card-move-options button {
+  background: #444; /* 濃くして押せそうに */
+  color: white;
+  border: 1px solid #999;
+  border-radius: 6px;
+  padding: 0.4em 1em; /* ←クリック範囲を広げる */
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.card-move-options button:hover {
+  background: #666;
+  transform: scale(1.05); /* 押せる感 */
+}
+
+
+.ability-line {
+  border-bottom: 1px solid #7d7d7d;
+}
+.ability-line.sub-line {
+  border-bottom: 1px solid #7d7d7d;
+}
+.card.selected {
+  outline: 2px solid gold;
+  transition: transform 0.2s ease;
+  transform: scale(1.05);
+}
+/* 特定の文字色 ================================================*/
+.highlight-ability {
+  color: gold;
+  font-weight: bold;
+}
+.stat-atk {
+  color: crimson;
+  font-weight: bold;
+}
+
+.stat-hp {
+  color: limegreen;
+  font-weight: bold;
+}
+
+.highlight-attack {
+  color: #ffaaaa; /* 薄赤 */
+  font-weight: bold;
+}
+
+.highlight-defense {
+  color: #aaccff; /* 薄青 */
+  font-weight: bold;
+}
+
+/* ================================================ */
+/* card-detail-panel 切り替えタブ */
+/* ================================================ */
+#card-detail-tabs {
+  display: flex;
+  justify-content: flex-start; /* ← 左寄せ */
+  height: 10%;
+  width: 90%;
+  top: -2em;
+  left: 0;
+  /* position: absolute; */
+}
+#card-move-options, #card-detail-content {
+  display: flex;
+  max-height: 50%;
+}
+#card-detail-content  {
+  flex-direction: column;
+}
+
+#tab-content-ability {
+  display: block; /* 必要に応じて */
+}
+
+#card-detail-ability {
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+#card-detail-tabs .tab-button {
+  width: 32%;
+  /* padding: 0.3em 0.8em; */
+  font-size: 80%;
+  font-weight: bold;
+  background: #444;
+  color: white;
+  border: 1px solid #999;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#card-detail-tabs .tab-button.active {
+  background: #888;
+}
+
+#card-detail-content .tab-content {
+  display: none;
+}
+
+#card-detail-content .tab-content.active {
+  display: block;
+}
+
+/* #card-move-options{
+  display: grid;
+} */
+.card-move-options {
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 0.5em;
+  justify-content: center;
+}
+
+.card-move-options button {
+  width: 44%;
+  height: 25%;
+  background: #444;
+  color: white;
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 0.95vh;
+  font-size: 0.95em;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s ease;
+}
+
+.card-move-options button:hover {
+  background: #666;
+}
+
+/* ================================================ */
+/* カードのステータス変動 */
+/* ================================================ */
+.enhance-controls {
+  display: flex;
+  justify-content: center; /* 中央揃え */
+  gap: 10%;
+  /* margin-left: 1.7em; */
+}
+
+.stat-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.stat-control label {
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.stat-control button {
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  background: #444; /* 濃くして押せそうに */
+  color: white;
+  border: 1px solid #999;
+  border-radius: 6px;
+  padding: 0.2em 1.4em;
+  font-size: 1.5em;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.stat-control button:hover {
+  background: #666;
+  transform: scale(1.05); /* 押せる感 */
+}
+/* 通常の移動ボタン用（card-move-options の中） */
+.card-move-options {
+  display: grid;
+  flex-wrap: wrap;
+  gap: 0.6em;
+  justify-content: center;
+  /* margin-top: 0.8em; */
+}
+
+.card-move-options button {
+  background: #444; /* 濃くして押せそうに */
+  color: white;
+  border: 1px solid #999;
+  border-radius: 6px;
+  padding: 0.4em 1em; /* ←クリック範囲を広げる */
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.card-move-options button:hover {
+  background: #666;
+  transform: scale(1.05); /* 押せる感 */
+}
+/* ================================================*/
+.field-area {
+  margin-top: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#field-row {
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}
+
+/* ================================================ */
+/* カード一覧 */
+/* ================================================ */
+#player-ui-wrapper {
+  width: 100%;
+  /* height: 17%; */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* PPバー */
+#player-cost-bar {
+  display: flex;
+  justify-content: center;
+  gap: 1%;
+}
+.pp-icon {
+  width: 5%;
+  height: auto;
+}
+.pp-icon.inactive {
+  filter: grayscale(100%) brightness(0.5);
+}
+
+/* メインUIバー */
+#player-ui-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1% 2%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* 左・中央・右ブロック */
+.left-side, .center-side, .right-side {
+  display: flex;
+  align-items: center;
+}
+.left-side { width: 35%; justify-content: flex-start; }
+.center-side { width: 30%; justify-content: center; }
+.right-side { width: 35%; justify-content: flex-end; }
+
+/* アイコン＋HP */
+.hp-block {
+  position: relative;
+  width: 48%;
+}
+.player-icon {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+}
+.hp-badge {
+  position: absolute;
+  bottom: -20%;
+  left: 100%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 60%;
+  background-image: url('./assets/images/card/HP.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.hp-text {
+  font-size: 1.2em;
+  color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px black;
+}
+
+.deck-card {
+  background-color: rgba(220, 220, 220, 0.834);
+}
+
+/* デッキ・EXデッキ */
+.player-deck-card,
+.player-ex-card {
+  width: 30%;
+  aspect-ratio: 2 / 3;
+  background-image: url('./assets/images/card/back枠なし.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
+  position: relative;
+}
+.player-deck-card {
+  background-color: #ffffff; /* ブロンズ風 */
+  border: 2px solid #ffd900;
+}
+.player-ex-card {
+  background-color: #222;
+  border: 2px solid #569f85;
+}
+
+/* 捨て札 ◎型 */
+.player-discard-icon {
+  width: 30%;
+  aspect-ratio: 1 / 1;
+  background-image: url('./assets/images/card/捨て札.png');
+  background-color: #222;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  border: 2px solid crimson;
+  box-shadow: inset 0 -4px 4px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.player-hand-icon {
+  width: 30%;
+  aspect-ratio: 1 / 1;
+  background-image: url('./assets/images/card/hand.png');
+  background-color: #222;
+  background-size: cover;
+  background-position: center;
+  /* border-radius: 50%; */
+  padding: 9%;
+  border: 2px solid #a88;
+  box-shadow: inset 0 -4px 4px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ================================================ */
+/* エネミーデータ */
+/* ================================================ */
+#enemy-ui-wrapper {
+  width: 100%;
+  /* height: 20%; */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+#enemy-cost-bar {
+  display: flex;
+  justify-content: center;
+  gap: 1%;
+  padding: 0.5% 0;
+}
+.enemy-pp-icon {
+  width: 5%;
+  height: auto;
+}
+.enemy-pp-icon.inactive {
+  filter: grayscale(100%) brightness(0.5);
+}
+
+#enemy-ui-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1% 2%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* 左・中央・右の共通構造はプレイヤーと同じ */
+.left-side, .center-side, .right-side {
+  display: flex;
+  align-items: center;
+}
+.left-side { width: 35%; justify-content: flex-start; }
+.center-side { width: 30%; justify-content: center; }
+.right-side { width: 35%; justify-content: flex-end; }
+
+/* アイコンとHPの逆向き配置（HPが上に出る） */
+.enemy-icon .hp-badge {
+  top: -20%;
+  bottom: auto;
+}
+
+/* フィールド＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ */
+
+.field-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.1;
+  flex-wrap: wrap;
+}
+.player-field-slot, .enemy-field-slot {
+  width: 15.6%;
+  aspect-ratio: 2 / 3;
+  background-color: rgba(255,255,255,0.05);
+  border: 2px dashed rgba(255,255,255,0.2);
+  border-radius: 6px;
+  position: relative;
+}
+
+
+.zone-label {
+  text-align: center;
+  font-family: "Georgia", serif; /* フォーマルでファンタジー感 */
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #f8e8c8; /* 黄味がかった羊皮紙風の色 */
+  text-shadow: 1px 1px 2px #432, -1px -1px 2px #432; /* 影で立体感 */
+  border-bottom: 2px solid #a88;
+  margin: 0.0em auto 0.0em auto;
+  padding: 0 8em;
+  width: fit-content;
+}
+
+.field-card {
+  width: 100%;
+  height: 100%;
+}
+
+/* 手札とカード =====================================================*/
+
+#player-hand {
+  overflow-x: auto;
+  overflow-y: hidden;  /* 拡大カードを上方向に出すため */
+  display: block;
+  position: relative;
+  max-height: 22%;
+  padding-top: 4%;
+  padding-bottom: 3%;
+}
+
+#hand-row {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  box-sizing: border-box;
+  overflow: visible;    /* はみ出し許可（重要） */
+  position: relative;
+
+}
+
+.card.hand-card.selected {
+  position: relative;
+  z-index: 10;
+  transform: scale(1.20);
+}
+#card-detail-status {
+  font-size: 0.9em;
+  color: #ccc;
+}
+
+.card.hand-card {
+  width: 100%;          /* スマホ対策 */
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  position: relative;
+  box-sizing: border-box;
+  transition: transform 0.2s ease;
+  z-index: 1;
+}
+.card-wrapper {
+  /* 5枚並ぶ想定 */
+  flex: 0 0 calc(5% - 10px); 
+  /* スマホ対策 */
+  min-width: 19.5%;          
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* margin: 0.2em; */
+}
+
+.card-number-below {
+  position: absolute;
+  top: -15%;
+  /* bottom: -1.3em;
+  left: 50%; */
+  font-size: 0.7em;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+
+
+#hand-row::-webkit-scrollbar {
+  height: 8px;
+}
+#hand-row::-webkit-scrollbar-track {
+  background: transparent;
+}
+#hand-row::-webkit-scrollbar-thumb {
+  background-color: #666;
+  border-radius: 4px;
+}
+
+
+
+
+#opponent-hand-row {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.card.opponent-card-back {
+  flex: 0 0 calc(12% - 0.5%); /* 横幅ベース、5枚でちょうどよい */
+  aspect-ratio: 2 / 3;       /* 縦横比維持（代替案） */
+  background-image: url('./assets/images/card/back.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.card.opponent-card {
+  flex: 0 0 calc(12% - 0.5%);
+  aspect-ratio: 2 / 3;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* ================================================ */
+/* ダイアログ設定 */
+/* ================================================ */
+#open-settings-button {
+  padding: 0.5em 1.2em;
+  font-size: 1em;
+  font-weight: bold;
+  background: linear-gradient(to bottom, #444, #222);
+  color: #fff;
+  border: 2px solid #aaa;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 1em 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+#open-settings-button:hover {
+  background: linear-gradient(to bottom, #555, #333);
+  border-color: #fff;
+  transform: translateY(-1px);
+}
+
+.dialog-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+}
+
+.dialog-box {
+  background: #222;
+  color: white;
+  padding: 1.5em;
+  border-radius: 12px;
+  box-shadow: 0 0 12px #000;
+  font-family: "Georgia", serif;
+  width: 90%;
+  max-width: 400px;
+}
+
+.dialog-box label {
+  display: block;
+  margin: 0.4em 0;
+}
+
+.dialog-box input,
+.dialog-box select {
+  width: 100%;
+  padding: 0.3em;
+  margin-top: 0.2em;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  background: #333;
+  color: white;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1em;
+}
+
+.dialog-buttons button {
+  padding: 0.4em 1.2em;
+  border-radius: 8px;
+  border: none;
+  background: #666;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.dialog-buttons button:hover {
+  background: #888;
+}
+
+/* 対戦設定の横並びスタイル */
+
+.setting-row span {
+  flex: 1;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.4em 0;
+}
+
+.setting-row label {
+  font-weight: bold;
+  font-size: 1em;
+  white-space: nowrap;  
+}
+
+.setting-row input[type="checkbox"] {
+  transform: scale(1.4); /* 大きく見せる */
+  margin-left: 1em;
+  vertical-align: middle;
+}

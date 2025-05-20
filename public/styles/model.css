@@ -1,0 +1,230 @@
+/* ＝＝＝＝ モーダル ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ */
+/* モーダル全体 */
+/* 背景オーバーレイ */
+.u-modal-overlay {
+    display: none; /* 初期状態では非表示 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* 背景の透明度 (デフォルト: 0.8) */
+    z-index: 1000; /* 背景をモーダルの下に設定 */
+  }
+  
+  .u-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* 半透明の黒背景 */
+    font-family: "Georgia", serif; /* ファンタジー感のあるフォント */
+  }
+  
+  /* モーダルのコンテンツ */
+  .u-modal__content {
+    color: #5a3e2b; /* 古書風の文字色 */
+    border: 0.5em solid #6b4226; /* 木製フレーム風の枠線 */
+    border-radius: 1em;
+    box-shadow: 0 0 2em rgba(0, 0, 0, 0.5); /* 光沢を出す影 */
+    width: 90%;
+    max-width: 40em;
+    max-height: 85%; /* モーダル全体の高さを制限 */
+    top: 35%; /* 縦方向の中央 */
+    left: 50%; /* 横方向の中央 */
+    transform: translate(-50%, -35%); /* 中央位置への調整 */
+    overflow: hidden; /* 全体のスクロールを防ぐ */
+    margin: 10% auto; /* 中央配置 */
+    padding: 1em;
+    position: relative; /* 内部スクロール用 */
+    backdrop-filter: blur(5px); /* 背景のぼかし効果 (オプション) */
+    background: rgba(
+      253,
+      241,
+      220,
+      1
+    ); /* パーチメント紙風の背景 (デフォルトは不透明) */
+  }
+  
+  /* モーダルヘッダー */
+  .u-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 0.1em solid #5a3e2b; /* ヘッダーの飾り線 */
+    margin-bottom: 1em;
+    /* padding-bottom: 0.5em; */
+  }
+  
+  .u-modal__icon {
+    font-size: 1.5em;
+    color: #d4a373; /* 金色風の色 */
+    margin-right: 0.5em;
+  }
+  
+  .u-modal__title {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 0%;
+    text-shadow: 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.8); /* タイトルに光沢 */
+  }
+  
+  /* モーダル本文 */
+  .u-modal__body {
+    font-size: 1.2em;
+    line-height: 1.8;
+    margin-bottom: 2em;
+  }
+  
+  /* テーブルをスクロール可能にするコンテナ */
+  .u-modal__table-container {
+    max-height: 15em; /* テーブル全体の高さを制限 */
+    overflow: hidden; /* 全体の余分なスクロールを防ぐ */
+    border: 0.1em solid #6b4226; /* テーブル枠線 */
+    border-radius: 0.5em; /* 枠線を丸める */
+    margin-top: 1em;
+    padding: 0.5em; /* 内側の余白 */
+  }
+  
+  /* テーブル全体 */
+  .u-modal__table {
+    width: 100%; /* テーブル全体の幅を100%に固定 */
+    border-collapse: collapse;
+    table-layout: fixed; /* 各列の幅を固定 */
+    background: rgba(255, 255, 255, 0.9);
+  }
+  
+  /* テーブルヘッダー */
+  .u-modal__table th {
+    background: #dbc097; /* ヘッダー背景色 */
+    color: #5a3e2b; /* ヘッダー文字色 */
+    font-weight: bold;
+    text-align: center;
+    border: 0.2em solid #6b4226; /* ヘッダー枠線 */
+    position: sticky; /* ヘッダーを固定 */
+    top: 0; /* 固定する位置 */
+    z-index: 1; /* 他の要素より上に表示 */
+  }
+  
+  /* テーブルデータ部分（スクロール可能） */
+  .u-modal__table tbody {
+    display: block; /* 独立したブロックとして扱う */
+    max-height: 12em; /* データ部分の高さ制限 */
+    overflow-y: auto; /* 縦スクロールを有効化 */
+    overflow-x: hidden; /* 縦スクロールを有効化 */
+    width: 100%; /* 幅を固定 */
+  }
+  
+  .u-modal__table td {
+    border: 0.1em solid #6b4226; /* テーブルセルの枠線 */
+    padding: 0.5em;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  /* テーブル列幅を固定 */
+  .u-modal__table thead tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* 列幅を固定 */
+  }
+  
+  .u-modal__table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* 列幅を固定 */
+  }
+  
+  /* スクロールバーのカスタマイズ */
+  .u-modal__table tbody::-webkit-scrollbar {
+    width: 0.4em;
+  }
+  
+  .u-modal__table tbody::-webkit-scrollbar-thumb {
+    background-color: #6b4226; /* スクロールバーの色 */
+    border-radius: 0.4em; /* 丸みを追加 */
+  }
+  
+  .u-modal__table tbody::-webkit-scrollbar-track {
+    background-color: #dbc097; /* スクロールバーの背景 */
+  }
+  
+  /* モーダルフッター */
+  .u-modal__footer {
+    display: flex;
+    justify-content: center;
+    gap: 1em; /* ボタン間の余白 */
+  }
+  
+  .u-modal__button {
+    background: linear-gradient(to bottom, #e9cba7, #b08d6e); /* ボタンの立体感 */
+    border: 0.2em solid #6b4226;
+    border-radius: 0.5em;
+    color: #5a3e2b;
+    font-size: 1.1em;
+    padding: 0.8em 1.5em;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+  }
+  
+  .u-modal__button:hover {
+    background: linear-gradient(
+      to bottom,
+      #b08d6e,
+      #e9cba7
+    ); /* 逆方向のグラデーション */
+    transform: translateY(-0.2em); /* ボタンが浮き上がる */
+  }
+  
+  .u-modal__close {
+    font-size: 1.5em;
+    color: #5a3e2b;
+    cursor: pointer;
+  }
+  
+  .u-modal__close:hover {
+    color: #d4a373;
+  }
+  
+  .u-modal__table thead,
+  .u-modal__table tbody {
+    display: block; /* 独立したブロックとして扱う */
+  }
+  
+  .u-modal__table thead {
+    width: calc(100% - 0.8em); /* スクロールバーの幅分だけ調整 */
+  }
+  
+  .u-modal__table tbody {
+    overflow-y: auto; /* 縦スクロールを有効化 */
+    max-height: 35em; /* スクロール部分の高さ制限 */
+    width: 100%; /* 幅をヘッダーに合わせる */
+  }
+  
+  /* モーダルのコンテンツが非表示の場合でもボタンを維持 */
+  .u-modal__footer {
+    margin-top: 1em;
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+  }
+  
+  .u-modal__button {
+    background: linear-gradient(to bottom, #e9cba7, #b08d6e);
+    border: 0.2em solid #6b4226;
+    border-radius: 0.5em;
+    color: #5a3e2b;
+    font-size: 1.1em;
+    padding: 0.5em 0.5em;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+  }
+  
+  .u-modal__button:hover {
+    background: linear-gradient(to bottom, #b08d6e, #e9cba7);
+    transform: translateY(-0.2em);
+  }

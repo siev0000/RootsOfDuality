@@ -1,0 +1,740 @@
+/* ＝＝　デッキモーダル　＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ */
+
+/* モーダル全体のスタイル */
+#deck-modal {
+    display: none; /* 初期状態では非表示 */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 100%;
+    color: #000;
+    overflow: hidden; /* 背景スクロールを防止 */
+    background-color: rgba(0, 0, 0, 0.8); /* 背景を半透明の黒に */
+    display: flex; /* フレックスボックスで中央寄せ */
+    justify-content: center; /* 水平方向に中央寄せ */
+    align-items: center; /* 垂直方向に中央寄せ */
+    display: none;
+}
+
+/* モーダルコンテンツのスタイル */
+#deck-modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 100%; /* 幅を100%に設定 */
+    height: 100%; /* 高さを100%に設定 */
+    box-sizing: border-box; /* パディングとボーダーを含めてサイズを計算 */
+    overflow-y: auto; /* 縦スクロールを有効化 */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-out;
+    position: relative;
+}
+
+/* 閉じるボタンのスタイル */
+#deck-modal-content .close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#deck-modal-content .close:hover,
+#deck-modal-content .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* アニメーション: フェードイン */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+/* ＝＝　デッキビルド　＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝ */
+
+
+/* 全体レイアウト */
+#deck-builder {
+    display: flex;
+    flex-direction: column; /* 縦方向に並べる */
+    height: 100%; /* ビューポート全体を占有 */
+    gap: 0.2%; /* セクション間の余白 */
+    background-color: #f4f4f4;
+}
+
+#deck-section {
+    flex: 2; /* 上部のセクション: 比率2 */
+    background-color: #fff; /* サンプル背景色 */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    min-height: 20%;
+    display: none;
+}
+
+#card-pool-section {
+    flex: 2; /* 上部のセクション: 比率2 */
+    background-color: #fff; /* サンプル背景色 */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    min-height: 65%;
+}
+
+
+/* ヘッダー */
+#deck-header,
+#card-pool-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 70%;
+    max-height: 10%;
+    /* margin-bottom: 10px; */
+}
+
+/* カードリスト */
+#deck-pool-list{
+    display: flex;
+    flex-wrap: wrap;
+    /* gap: 1px; */
+    max-height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+#card-pool-list {
+    display: flex;
+    flex-wrap: wrap;
+    /* gap: 1px; */
+    max-height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+#deck-pool-list .card:hover,
+#card-pool-list .card:hover {
+    background-color: #9c9c9c;
+}
+/* デッキ側限定================================== */
+
+
+/* カードイラスト設定======================================= */
+.card-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2%; /* カード間の隙間 */
+    width: 100%; /* コンテナ全体の幅を確保 */
+    box-sizing: border-box; /* パディングを含む幅計算 */
+}
+
+
+.card {
+    position: relative; /* 子要素のabsolute位置をこの要素基準にする */
+    flex: 0 1 calc(33% - 2%); /* 横幅を4等分 */
+    aspect-ratio: 2 / 3; /* 縦横比を固定 */
+    /* max-width: 33%; */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 中央に配置される内容（画像など）を調整 */
+    align-items: center;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    overflow: hidden;
+    height: auto;
+}
+
+.card-rarity-layer,
+.card-illustration-layer {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-illustration-layer {
+    position: absolute;
+    top: 18%;
+    left: 15%;
+    width: 70%;
+    height: 75%;
+    background-image: url('./assets/images/illust/default.png'); /* 必要に応じて上書きされる */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border-radius: 8px;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+.card-rarity-layer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 8px;
+}
+
+.icon-name-container,
+.ability-container {
+  position: relative;
+  z-index: 2;
+}
+
+.icon-name-container {
+    text-align: center;
+    position: relative; /* 親要素を基準に調整 */
+    /* 必要な量だけ上に移動 */
+    /* top: -25%; */
+    width: 100%;
+    height: 30%;
+    margin: 0; /* 不要なマージンをリセット */
+    padding: 0; /* 不要なパディングをリセット */
+}
+
+.icon-container {
+    display: flex;
+    flex-direction: column;    /* 縦方向に並べる */
+    align-items: flex-start;   /* 左端に揃える */
+    gap: 1%;                  /* 上下の間隔 */
+    margin-top: 8%;
+}
+
+.race-icon{
+    left: 0%;
+}
+.class-icon{
+    left: 0%;
+}
+.race-icon, .class-icon {
+    width: 18%;
+    aspect-ratio: 1 / 1;        /* 正方形に保つ */
+    object-fit: cover;          /* 枠にぴったり収める（はみ出し防止） */
+    border-radius: 50%;         /* ◎ の形にする */
+    border: 1px solid #333;     /* 枠線（任意） */
+    background-color: #fff;     /* 背景（任意） */
+}
+
+.character-name {
+    font-size: 50%;
+    font-weight: 900; /* 太さを強調 */
+    width: 72%;
+    max-height: 40%;
+    margin-left: 15%;
+    margin-top: -18%;
+    /* margin-bottom: 0; */
+    white-space: nowrap; /* 名前が改行されないように設定 */
+    white-space: normal;
+    word-break: break-word;
+    /* overflow: hidden; */
+    text-overflow: ellipsis;
+    text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white; /* 白い輪郭 */
+    /* margin: 0; */
+    background-color: #ffffffbd;
+    color: rgb(0, 0, 0);
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+    font-weight: bold;
+}
+
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin: 0; /* 不要なマージンをリセット */
+}
+
+
+/* コストの位置: 左上 */
+.card-cost {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    color: black;
+    text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white; /* 白い輪郭 */
+    background-image: url('../assets/images/card/コスト.png'); /* 背景画像 */
+    background-size: 100%; /* 親要素に対する割合で指定 */
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* HPの位置: 左下 */
+.card-hp {
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
+    color: white;
+    text-shadow: 1px 1px 2px black, -1px -1px 2px black, 1px -1px 2px black, -1px 1px 2px black; /* 黒い輪郭 */
+    background-image: url('../assets/images/card/HP.png'); /* 背景画像 */
+    background-size: 100%; /* 親要素に対する割合で指定 */
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* ATKの位置: 右下 */
+.card-atk {
+    position: absolute;
+    bottom: 0%;
+    right: 0%;
+    color: white;
+    text-shadow: 1px 1px 2px black, -1px -1px 2px black, 1px -1px 2px black, -1px 1px 2px black; /* 黒い輪郭 */
+    background-image: url('../assets/images/card/ATK.png'); /* 背景画像 */
+    background-size: 100%; /* 親要素に対する割合で指定 */
+    background-repeat: no-repeat;
+    background-position: center;
+    
+}
+
+.card-cost, .card-hp, .card-atk {
+    width: 18%; /* アイコンの幅 */
+    display: flex; /* Flexboxを有効化 */
+    justify-content: center; /* 水平方向に中央配置 */
+    align-items: center; /* 垂直方向に中央配置 */
+    background-position: center; /* 背景を中央に配置 */
+    font-size: 125%;
+    font-weight: 900; /* 太さを強調 */
+    padding: 1% 1%;
+    border-radius: 4px;
+    aspect-ratio: 1 / 1; /* 正方形で親要素を固定 */
+    z-index: 2;
+}
+
+#deck-detail-panel {
+    width: 100%;
+    max-width: 100%;
+    height: 10%;
+    background-color: #2d2d2d;
+    border-top: 2px solid #aaa;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+    color: #ffffff;
+    overflow-y: auto;
+  }
+
+.ability-container {
+    margin: 4%;
+    height: 41%;
+    margin-bottom: 3%;
+    width: 80%;
+    background-color: rgba(255, 255, 255, 0.8); /* 半透明の背景 */
+    border-radius: 8px;
+    text-align: center;
+}
+
+.ability-description {
+    font-size: 0.5rem;
+    font-weight: bold;
+    color: #333;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); /* 視認性を向上 */
+    height: 100%;
+    overflow-y: auto; /* 縦方向のスクロールを有効化 */
+    margin: 0;
+}
+
+
+/* ボタンの共通スタイル */
+.card-button {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none; /* 初期状態は非表示 */
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.card-button.plus {
+    top: 23%;
+    right: 1%;
+}
+
+.card-button.minus {
+    top: 23%;
+    left: 1%;
+}
+
+.card-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+
+/* カードが選択された場合にボタンを表示 */
+.card.selected .card-button {
+    display: flex;
+}
+
+
+/* カードが選択されたときのスタイル */
+.card.selected {
+    border: 1px solid #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.count-container {
+    position: absolute;
+    bottom: 0%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2px 6px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* ===タブボタンのUI ============================================== */
+#deck-tabs {
+    background: linear-gradient(to bottom, #fdf1dc, #dbc097); /* 羊皮紙背景 */
+    padding: 0.2em 0.5em;
+    border-radius: 0.25em 0.25em 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    border-bottom: 3px solid #6b4226; /* 木製風ライン */
+    box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.2);
+    font-family: "Georgia", serif;
+  }
+  #deck-tabs, #pool-category-tabs {
+    display: flex;
+  }
+  
+  .deck-tab-content {
+    margin-top: 1em;
+    display: none;
+    flex-wrap: wrap;
+    gap: 2%;
+  }
+  
+  #deck-tabs .tab-button {
+    background: linear-gradient(to bottom, #fff2de, #c1a379);
+    border: 2px solid #6b4226;
+    border-bottom: none;
+    border-radius: 0.5em 0.5em 0 0;
+    padding: 0.2em 0.6em;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #5a3e2b;
+    text-shadow: 0.03em 0.03em #fff2cc;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    transition: all 0.2s ease;
+    box-shadow: 0 0.2em 0.3em rgba(0,0,0,0.2);
+  }
+  
+  /* タブボタンのアクティブ状態 */
+  #deck-tabs .tab-button.active {
+    background: #fff8ea;
+    border-color: #a0522d;
+    color: #3d2a1a;
+    z-index: 2;
+    box-shadow: 0 0 0.8em rgba(255, 200, 100, 0.6);
+    transform: translateY(1px);
+    font-weight: bolder;
+    text-shadow: 0 0 0.2em rgba(255, 240, 200, 0.7);
+  }
+  
+  /* 左2つのタブをグループ化するためのラッパーをCSSで扱う */
+  #deck-tabs .tab-button:not(#deck-builder-button) {
+    margin-right: 0.5em;
+  }
+  #deck-builder-button {
+    margin-left: auto; /* ←これで右寄せされる！ */
+  }
+
+  #deck-tabs label,
+  #deck-tabs input,
+  #deck-tabs button:not(.tab-button) {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: #5a3e2b;
+  }
+  .tab-group {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+#pool-category-tabs button {
+    padding: 0.4em 0.8em;
+    margin-right: 0.5em;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border: 2px solid #6b4226;
+    border-radius: 0.5em;
+    background: linear-gradient(to bottom, #fdf1dc, #dbc097);
+    color: #5a3e2b;
+    box-shadow: 0 0 0.5em rgba(0,0,0,0.2);
+    text-shadow: 0.05em 0.05em #fff2cc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#pool-category-tabs button:hover {
+    background: linear-gradient(to bottom, #dbc097, #fdf1dc);
+    transform: translateY(-0.1em);
+    box-shadow: 0 0 0.7em rgba(255, 215, 100, 0.6);
+    color: #a0522d;
+}
+/* ========================================================== */
+/* フィルターのUI  */
+/* ========================================================== */
+/* === モーダル背景 === */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(20, 10, 5, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5000;
+  }
+  
+  /* === モーダル本体 === */
+  .modal-box {
+    background: linear-gradient(to bottom, #e3d0aa, #c8ac7f);
+    border: 4px solid #8b5e3c;
+    border-radius: 14px;
+    box-shadow: 0 0 20px rgba(50, 30, 10, 0.4);
+    font-family: "Georgia", serif;
+    color: #3b2b1a;
+    padding: 1.6em;
+    width: 90%;
+    max-width: 420px;
+  }
+  
+  /* === タイトル === */
+  .modal-box h3 {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 0.8em;
+    color: #3c2a1a;
+    text-shadow: 1px 1px 0 #fff0d5;
+    border-bottom: 2px solid #8b5e3c;
+    padding-bottom: 0.3em;
+  }
+  
+  /* === フィルター行 === */
+  .filter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em 1.5em;
+    margin-bottom: 1.2em;
+  }
+  
+  /* === ラベル === */
+  .filter-row label {
+    font-weight: bold;
+    font-size: 1em;
+    color: #4d3319;
+    display: block;
+    margin-bottom: 0.2em;
+  }
+  
+  /* === セレクトボックス === */
+  .filter-row select {
+    width: 100%;
+    padding: 0.5em;
+    border-radius: 6px;
+    background: #fff8e8;
+    border: 2px solid #a67c52;
+    color: #2c1c0a;
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border 0.2s ease;
+  }
+  
+  .filter-row select:focus {
+    border-color: #cc9955;
+    outline: none;
+    box-shadow: 0 0 6px rgba(200, 160, 100, 0.6);
+  }
+  
+  /* === ボタンエリア === */
+  .dialog-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5em;
+  }
+  
+  /* === ボタンスタイル === */
+  .dialog-buttons button {
+    padding: 0.6em 1.6em;
+    border-radius: 8px;
+    background: linear-gradient(to bottom, #f3d27a, #c69840);
+    color: #3a2a14;
+    font-weight: bold;
+    border: 2px solid #8b5e3c;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s ease, transform 0.1s ease;
+  }
+  
+  .dialog-buttons button:hover {
+    background: linear-gradient(to bottom, #ffe6a3, #d8a84f);
+    transform: translateY(-1px);
+  }
+  
+  .dialog-buttons button:active {
+    transform: scale(0.97);
+  }
+  
+  /* #open-filter-modal-button {
+    padding: 0.5em 1.2em;
+    font-size: 1em;
+    font-weight: bold;
+    color: #3a2a14;
+    background: linear-gradient(to bottom, #f9e2a0, #d8b56a);
+    border: 2px solid #8b5e3c;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-family: 'Georgia', serif;
+    transition: background 0.2s ease, transform 0.1s ease;
+  }
+  
+  #open-filter-modal-button:hover {
+    background: linear-gradient(to bottom, #fff2b4, #e0c07a);
+    transform: translateY(-1px);
+  }
+  
+  #open-filter-modal-button:active {
+    transform: scale(0.97);
+  } */
+  
+/* デッキグラフ ==============================================*/
+  .cost-bar-horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    font-family: "Georgia", serif;
+    color: #5a3e2b;
+    font-size: 0.9em;
+  }
+  
+  .cost-bar-segment {
+    display: flex;
+    /* column */
+    align-items: flex-start;
+    gap: 0.2em;
+    background: #fdf1dc;
+    border: 1px solid #6b4226;
+    border-radius: 0.4em;
+    padding: 0.2em 0.5em;
+  }
+  .deck-cost-display {
+    margin-top: 0.1em;
+    font-family: "Georgia", serif;
+    color: #5a3e2b;
+  }
+
+  #deck-counter{
+    margin: 0px;
+  }
+/* === デッキリストの画面 ============================================== */
+#editDeck{
+    height: 100%; /* 高さを制限 */
+}
+/* デッキ一覧の表示領域 */
+#deck-container {
+    /* display: grid; */
+    grid-template-columns: repeat(2, 1fr); /* PCでは2列 */
+    gap: 15px; /* カード間の余白 */
+    justify-content: center;
+    padding: 10px;
+    width: 100%;
+    max-height: 100%; /* 高さを制限 */
+    overflow-y: auto; /* 縦スクロールを有効化 */
+    color: #000;
+    box-sizing: border-box;
+}
+
+  
+.deck-checkmark {
+    position: absolute;
+    right: 0.5em;
+    font-size: 1.2rem;
+    color: green;
+    cursor: pointer;
+}
+
+.selected-deck {
+    border-color: gold;
+    box-shadow: 0 0 0.5em gold;
+    max-width: 95%;
+}
+
+
+/* スクロールバーのカスタマイズ */
+#deck-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+#deck-container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+}
+
+#deck-container::-webkit-scrollbar-track {
+    background-color: #ddd;
+}
+
+/* デッキ作成ボタン */
+.deck-create-card {
+    grid-column: span 2; /* 2列分の幅を取る */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #e0e0e0;
+    border: 2px dashed #777;
+    padding: 3%;
+    text-align: center;
+    cursor: pointer;
+}
+
+.deck-create-card h3 {
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+
+.deck-create-card button {
+    padding: 10px 15px;
+    background-color: #0084ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.deck-create-card button:hover {
+    background-color: #005bbf;
+}
+
+
