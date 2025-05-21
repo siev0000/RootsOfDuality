@@ -795,7 +795,7 @@
   transform: translateX(-50%);
   width: 60%;
   height: 60%;
-  background-image: url('./assets/images/card/HP.png');
+  background-image: url('/assets/images/card/HP.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -820,7 +820,7 @@
 .player-ex-card {
   width: 30%;
   aspect-ratio: 2 / 3;
-  background-image: url('./assets/images/card/back枠なし.png');
+  background-image: url('/assets/images/card/back枠なし.png');
   background-size: cover;
   background-position: center;
   border-radius: 8px;
@@ -843,7 +843,7 @@
 .player-discard-icon {
   width: 30%;
   aspect-ratio: 1 / 1;
-  background-image: url('./assets/images/card/捨て札.png');
+  background-image: url('/assets/images/card/捨て札.png');
   background-color: #222;
   background-size: cover;
   background-position: center;
@@ -857,7 +857,7 @@
 .player-hand-icon {
   width: 30%;
   aspect-ratio: 1 / 1;
-  background-image: url('./assets/images/card/hand.png');
+  background-image: url('/assets/images/card/hand.png');
   background-color: #222;
   background-size: cover;
   background-position: center;
@@ -1052,7 +1052,7 @@
 .card.opponent-card-back {
   flex: 0 0 calc(12% - 0.5%); /* 横幅ベース、5枚でちょうどよい */
   aspect-ratio: 2 / 3;       /* 縦横比維持（代替案） */
-  background-image: url('./assets/images/card/back.png');
+  background-image: url('/assets/images/card/back.png');
   background-size: cover;
   background-position: center;
   border-radius: 8px;

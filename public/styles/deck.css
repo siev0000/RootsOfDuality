@@ -169,7 +169,7 @@
     left: 15%;
     width: 70%;
     height: 75%;
-    background-image: url('./assets/images/illust/default.png'); /* 必要に応じて上書きされる */
+    background-image: url('/assets/images/illust/default.png'); /* 必要に応じて上書きされる */
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
