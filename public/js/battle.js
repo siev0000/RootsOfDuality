@@ -588,7 +588,7 @@ function openCardDetail(card, options = "手札") {
   // 背景画像を card-detail-panel に設定
   document.getElementById(
     "card-detail-img"
-  ).src = `assets/images/illust/${card.画像}.png`;
+  ).src = `assets/images/illust/${card.画像}.webp`;
 
   // パネルを表示
   panel.style.display = "block";
@@ -910,9 +910,9 @@ function renderCostBar(current, max, isEnemy = false) {
   const barId = isEnemy ? "enemy-cost-bar" : "player-cost-bar";
   const iconClass = isEnemy ? "enemy-pp-icon" : "pp-icon";
   const filledIcon = isEnemy
-    ? "/assets/images/cost/エネミーコスト.png"
-    : "/assets/images/cost/プレイヤーコスト.png";
-  const emptyIcon = "/assets/images/cost/ノーコスト.png";
+    ? "/assets/images/cost/エネミーコスト.webp"
+    : "/assets/images/cost/プレイヤーコスト.webp";
+  const emptyIcon = "/assets/images/cost/ノーコスト.webp";
 
   const bar = document.getElementById(barId);
   if (!bar) return;

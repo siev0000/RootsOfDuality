@@ -615,18 +615,18 @@ function createCardElement(card, options = {}) {
     // レイヤー構築
     const rarityLayer = document.createElement('div');
     rarityLayer.className = 'card-rarity-layer';
-    rarityLayer.style.backgroundImage = `url('/assets/images/card/${encodeURIComponent(card.レアリティ)}カード3.png')`;
+    rarityLayer.style.backgroundImage = `url('/assets/images/card/${encodeURIComponent(card.レアリティ)}カード3.webp')`;
 
     const backgroundLayer = document.createElement('div');
     backgroundLayer.className = 'card-illustration-layer';
     
-    const imageUrl = `/assets/images/illust/${encodeURIComponent(card.画像)}.png`;
+    const imageUrl = `/assets/images/illust/${encodeURIComponent(card.画像)}.webp`;
     const img = new Image();
     img.onload = () => {
         backgroundLayer.style.backgroundImage = `url('${imageUrl}')`;
     };
     img.onerror = () => {
-        backgroundLayer.style.backgroundImage = `url('/assets/images/illust/default.png')`;
+        backgroundLayer.style.backgroundImage = `url('/assets/images/illust/default.webp')`;
     };
     img.src = imageUrl;
     
