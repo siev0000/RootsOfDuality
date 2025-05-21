@@ -391,7 +391,7 @@ function displayAbilityDetails() {
       li.className = 'ability-section-header';
     } else {
       // 通常項目
-      li.textContent = `${name}：${effect || "効果なし"}`;
+      li.textContent = `${name}：${effect || ""}`;
     }
 
     list.appendChild(li);
