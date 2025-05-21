@@ -910,9 +910,9 @@ function renderCostBar(current, max, isEnemy = false) {
   const barId = isEnemy ? "enemy-cost-bar" : "player-cost-bar";
   const iconClass = isEnemy ? "enemy-pp-icon" : "pp-icon";
   const filledIcon = isEnemy
-    ? "./assets/images/cost/エネミーコスト.png"
-    : "./assets/images/cost/プレイヤーコスト.png";
-  const emptyIcon = "./assets/images/cost/ノーコスト.png";
+    ? "/assets/images/cost/エネミーコスト.png"
+    : "/assets/images/cost/プレイヤーコスト.png";
+  const emptyIcon = "/assets/images/cost/ノーコスト.png";
 
   const bar = document.getElementById(barId);
   if (!bar) return;

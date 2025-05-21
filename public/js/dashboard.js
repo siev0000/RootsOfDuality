@@ -620,7 +620,7 @@ function createCardElement(card, options = {}) {
     const backgroundLayer = document.createElement('div');
     backgroundLayer.className = 'card-illustration-layer';
     
-    const imageUrl = `./assets/images/illust/${encodeURIComponent(card.画像)}.png`;
+    const imageUrl = `/assets/images/illust/${encodeURIComponent(card.画像)}.png`;
     const img = new Image();
     img.onload = () => {
         backgroundLayer.style.backgroundImage = `url('${imageUrl}')`;
@@ -640,8 +640,8 @@ function createCardElement(card, options = {}) {
     iconNameContainer.innerHTML = `
         <p class="character-name">${card.名前}</p>
         <div class="icon-container">
-            ${card.種族1 ? `<img src="./assets/images/role/${card.種族1}.webp" class="race-icon">` : ''}
-            ${card.職業1 ? `<img src="./assets/images/role/${card.職業1}.webp" class="class-icon">` : ''}
+            ${card.種族1 ? `<img src="/assets/images/role/${card.種族1}.webp" class="race-icon">` : ''}
+            ${card.職業1 ? `<img src="/assets/images/role/${card.職業1}.webp" class="class-icon">` : ''}
         </div>
     `;
     

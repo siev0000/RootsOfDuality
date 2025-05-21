@@ -13,7 +13,7 @@ body {
 .wrapper {
     width: 100%; /* 画面幅全体 */
     height: 100%; /* 画面高さ全体 */
-    background-image: url('../assets/images/background-image.png');
+    background-image: url('./assets/images/background-image.png');
     background-size: cover;
     background-position: center;
     display: flex;

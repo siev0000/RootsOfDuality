@@ -268,7 +268,7 @@
     left: 0%;
     color: black;
     text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white; /* 白い輪郭 */
-    background-image: url('../assets/images/card/コスト.png'); /* 背景画像 */
+    background-image: url('./assets/images/card/コスト.png'); /* 背景画像 */
     background-size: 100%; /* 親要素に対する割合で指定 */
     background-repeat: no-repeat;
     background-position: center;
@@ -281,7 +281,7 @@
     left: 0%;
     color: white;
     text-shadow: 1px 1px 2px black, -1px -1px 2px black, 1px -1px 2px black, -1px 1px 2px black; /* 黒い輪郭 */
-    background-image: url('../assets/images/card/HP.png'); /* 背景画像 */
+    background-image: url('./assets/images/card/HP.png'); /* 背景画像 */
     background-size: 100%; /* 親要素に対する割合で指定 */
     background-repeat: no-repeat;
     background-position: center;
@@ -294,7 +294,7 @@
     right: 0%;
     color: white;
     text-shadow: 1px 1px 2px black, -1px -1px 2px black, 1px -1px 2px black, -1px 1px 2px black; /* 黒い輪郭 */
-    background-image: url('../assets/images/card/ATK.png'); /* 背景画像 */
+    background-image: url('./assets/images/card/ATK.png'); /* 背景画像 */
     background-size: 100%; /* 親要素に対する割合で指定 */
     background-repeat: no-repeat;
     background-position: center;

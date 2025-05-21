@@ -39,7 +39,7 @@ function playSelected() {
     return;
   }
 
-  const src = `./assets/effect/エフェクト集/320×240/${encodeURIComponent(selectedFile)}`;
+  const src = `/assets/effect/エフェクト集/320×240/${encodeURIComponent(selectedFile)}`;
   effectFrame.src = src;
 }
 
