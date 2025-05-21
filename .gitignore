@@ -1,1 +1,3 @@
+# バッチファイルを無視
+*.bat
 node_modules/

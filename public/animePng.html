@@ -137,8 +137,9 @@
 
       async function loadEffectFileList() {
         try {
-          // const res = await fetch("/list-all");
-          // const list = await res.json();
+          const res = await fetch("/data/effect_list.json");
+          const list = await res.json();
+
           if (Array.isArray(list)) {
             allFiles = list;
             console.log("✅ エフェクト一覧:", allFiles);
@@ -150,6 +151,7 @@
           console.error("❌ エフェクト一覧取得失敗:", err);
         }
       }
+
 
       function populateEffectSelector() {
         const selector = document.getElementById("effect-selector");
@@ -174,9 +176,7 @@
           return;
         }
 
-        const path = `/assets/effect/エフェクト集/320×240/${encodeURIComponent(
-          selectedFile
-        )}`;
+        const path = `/assets/effect/エフェクト集/320×240/${encodeURIComponent(selectedFile)}.webp`;
 
         const preload = new Image();
         preload.onload = () => {
