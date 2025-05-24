@@ -213,23 +213,23 @@
     display: flex;
     flex-direction: column;    /* 縦方向に並べる */
     align-items: flex-start;   /* 左端に揃える */
-    gap: 1%;                  /* 上下の間隔 */
-    margin-top: 8%;
+    gap: 0.2em;               /* 上下の間隔 */
+    margin-top: 11%;
 }
 
 .race-icon{
-    left: 0%;
+    left: 1%;
 }
 .class-icon{
-    left: 0%;
+    left: 1%;
 }
 .race-icon, .class-icon {
-    width: 18%;
+    width: 20%;
     aspect-ratio: 1 / 1;        /* 正方形に保つ */
     object-fit: cover;          /* 枠にぴったり収める（はみ出し防止） */
     border-radius: 50%;         /* ◎ の形にする */
-    border: 1px solid #333;     /* 枠線（任意） */
-    background-color: #fff;     /* 背景（任意） */
+    /* border: 1px solid #333; */
+    background-color: transparent;
 }
 
 .character-name {
@@ -309,7 +309,7 @@
     justify-content: center; /* 水平方向に中央配置 */
     align-items: center; /* 垂直方向に中央配置 */
     background-position: center; /* 背景を中央に配置 */
-    font-size: 125%;
+    font-size: 200%; /* 125% */
     font-weight: 900; /* 太さを強調 */
     padding: 1% 1%;
     border-radius: 4px;

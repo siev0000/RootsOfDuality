@@ -34,8 +34,8 @@
     max-width: 40em;
     max-height: 85%; /* モーダル全体の高さを制限 */
     top: 35%; /* 縦方向の中央 */
-    left: 50%; /* 横方向の中央 */
-    transform: translate(-50%, -35%); /* 中央位置への調整 */
+    /* left: 50%; */
+    transform: translate(-0%, -35%); /* 中央位置への調整 */
     overflow: hidden; /* 全体のスクロールを防ぐ */
     margin: 10% auto; /* 中央配置 */
     padding: 1em;
