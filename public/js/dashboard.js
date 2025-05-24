@@ -640,10 +640,13 @@ function createCardElement(card, options = {}) {
     iconNameContainer.innerHTML = `
         <p class="character-name">${card.名前}</p>
         <div class="icon-container">
-            ${card.種族1 ? `<img src="/assets/images/role/${card.種族1}.webp" class="race-icon">` : ''}
-            ${card.職業1 ? `<img src="/assets/images/role/${card.職業1}.webp" class="class-icon">` : ''}
+            ${card.種族1 ? `<div class="race-icon icon-mask" style="background-image: url('/assets/images/role/${card.種族1}.webp');"></div>` : ''}
+            ${card.種族2 ? `<div class="race-icon icon-mask" style="background-image: url('/assets/images/role/${card.種族2}.webp');"></div>` : ''}
+            ${card.職業1 ? `<div class="class-icon icon-mask" style="background-image: url('/assets/images/role/${card.職業1}.webp');"></div>` : ''}
+            ${card.職業2 ? `<div class="class-icon icon-mask" style="background-image: url('/assets/images/role/${card.職業2}.webp');"></div>` : ''}
         </div>
     `;
+
     
     // フォントサイズを状況によって調整
     const nameElement = iconNameContainer.querySelector('.character-name');
