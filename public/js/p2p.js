@@ -562,11 +562,17 @@ function joinRoom() {
 
   document.getElementById("submit-room-button").onclick = () => {
     const roomId = document.getElementById("room-id-input").value.trim();
-    if (roomId) {
-      isHost = false;
-      setupRoom(roomId, isHost);
-      enterRoomUI(roomId);
+
+    // 🔍 5桁チェック（数字限定 or 任意の文字列どちらでも対応）
+    if (!/^\d{5}$/.test(roomId)) {
+      alert("部屋番号は5桁の数字で入力してください。");
+      return;
     }
+
+    isHost = false;
+    setupRoom(roomId, isHost);
+    enterRoomUI(roomId);
+
     document.getElementById("room-info").style.display = "none";
   };
 
