@@ -15,6 +15,7 @@ let selectedDeckName = null;;
 let notifications = "" //お知らせ
 let abilityDetails = [] // 能力一覧
 let cardList = [] //カードリスト
+let tokenCard = [] // トークンリスト
 let battleHTMLLoaded = false; // 初回フラグ
 let effectHTMLLoaded = false; // 初回フラグ
 
@@ -30,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelector('#bgmVolume').value = volumeSettings.bgm;
         document.querySelector('#sfxVolume').value = volumeSettings.sfx;
     }
-    cardList = await fetchCardList()
+    await fetchCardList();
     console.log('カードリスト 取得:', cardList);
     populateRaceAndClassOptions(cardList); // ← 種族・クラスのリスト化
     notifications = await fetchNotifications()
@@ -85,25 +86,8 @@ function initializeSelectedDeck() {
     selectedDeckId = localStorage.getItem('selectedDeckId') || null;
     selectedDeckName = localStorage.getItem('selectedDeckName') || null;
 }
+
 // 能力一覧を取得する関数（data/abilities.json）
-// async function loadAbilityDetails() {
-//   try {
-//     const response = await fetch('./data/abilities.json');
-//     const json = await response.json();
-
-//     if (!Array.isArray(json)) {
-//       console.error('abilities.json の形式が不正です');
-//       return false;
-//     }
-
-//     console.log('能力詳細データを取得しました:', json);
-//     return json;
-
-//   } catch (error) {
-//     console.error('能力詳細取得エラー:', error);
-//     return false;
-//   }
-// }
 async function loadAbilityDetails() {
   try {
     const response = await fetch('./data/abilities.json');
@@ -167,6 +151,32 @@ async function fetchCardList() {
     return [];
   }
 }
+async function fetchCardList() {
+  try {
+    const response = await fetch('./data/cards.json');
+    const result = await response.json();
+
+    if (!Array.isArray(result)) {
+      console.error('cards.json の形式が不正です');
+      alert('カードリストを取得できませんでした。');
+      return { cards: [], tokenCard: [] };
+    }
+
+    // カードを分類
+    tokenCard = result.filter(card => card?.分類1 === "トークン");
+
+    console.log('カード:', result);
+    console.log('トークンカード:', tokenCard);
+    cardList = result
+    return;
+
+  } catch (error) {
+    console.error('カードリスト取得エラー:', error);
+    alert('カードリストの取得中にエラーが発生しました。');
+    return { cards: [], tokenCard: [] };
+  }
+}
+
 
 // お知らせを取得する関数（data/notifications.json）
 async function fetchNotifications() {
@@ -572,8 +582,9 @@ function adjustCardCount(cardId, action) {
     // 名前からカードデータを検索
     const cardData = cardList.find(c => c.名前 === cardId);
     const rarity = cardData?.レアリティ || "B";
+    const cardType = cardData?.分類1 || "マジック";
 
-    console.log("rarity :", rarity, cardId)
+    console.log("rarity :", rarity, cardId, )
 
     // 枚数集計
     const totalCards = Object.values(deck).reduce((sum, val) => sum + val, 0);
@@ -586,6 +597,11 @@ function adjustCardCount(cardId, action) {
     const normalCardCount = totalCards - exCardCount;
 
     if (action === 'add') {
+        if (cardType === "トークン") {
+            alert("トークンはデッキにいれることは出来ません");
+            return;
+        }
+
         if (deck[cardId] >= 3) {
             alert('このカードは既に最大枚数です！');
             return;
@@ -607,6 +623,8 @@ function adjustCardCount(cardId, action) {
             alert("デッキの合計は最大43枚までです！");
             return;
         }
+
+
 
         deck[cardId]++;
     } else if (action === 'remove') {

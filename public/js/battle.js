@@ -483,7 +483,8 @@ function openCardDetail(card, options = "手札") {
       playerState.drawPile,
       playerState.graveyard,
       playerState.exDeck,
-      playerState.field
+      playerState.field,
+      tokenCard
     ];
     panel.style.top = "1%";
   }
@@ -647,7 +648,8 @@ function findCardCurrentZone(card) {
     "デッキ": playerState.drawPile,
     "捨て札": playerState.graveyard,
     "EXデッキ": playerState.exDeck,
-    "場": playerState.field
+    "場": playerState.field,
+    "トークン": tokenCard
   };
 
   for (const [zoneName, zoneArray] of Object.entries(zones)) {
@@ -706,13 +708,12 @@ function renderCardMoveOptions(currentLocation) {
 
 // カードを移動させる
 function moveCardToLocation(destination) {
-  if (!selectedDetailCard || !selectedDetailCard.instanceId) {
+  console.log("カードを移動させる destination : ", destination, selectedDetailCard);
+
+  if (!selectedDetailCard) {
     console.warn("移動対象のカードが不明です");
     return;
   }
-
-  const currentZoneName = findCardCurrentZone(selectedDetailCard);
-  console.log("現在のゾーン:", currentZoneName, "→ 移動先:", destination);
 
   const zones = {
     "手札": playerState.playerHand,
@@ -721,32 +722,41 @@ function moveCardToLocation(destination) {
     "EX": playerState.exDeck,
     "場": playerState.field
   };
-
   const allZones = Object.values(zones);
 
-  // 1. 今いるゾーンから削除
+  let currentZoneName = findCardCurrentZone(selectedDetailCard);
   let found = false;
-  for (const zone of allZones) {
-    const index = zone.findIndex(c => c.instanceId === selectedDetailCard.instanceId);
-    if (index !== -1) {
-      zone.splice(index, 1);
-      found = true;
-      break;
+
+  // 1. 既に instanceId がある → 通常削除処理
+  if (selectedDetailCard.instanceId) {
+    for (const zone of allZones) {
+      const index = zone.findIndex(c => c.instanceId === selectedDetailCard.instanceId);
+      if (index !== -1) {
+        zone.splice(index, 1);
+        found = true;
+        break;
+      }
+    }
+
+    if (!found && selectedDetailCard.分類1 !== "トークン") {
+      console.warn("カードが移動元から見つかりませんでした");
+      return;
     }
   }
 
-  if (!found) {
-    console.warn("カードが移動元から見つかりませんでした");
-    return;
+  // 2. instanceId がなければここで付与（例: トークン）
+  if (!selectedDetailCard.instanceId) {
+    selectedDetailCard.instanceId = generateUUID(); // crypto.randomUUID() ではなく代替版を使用
+    console.log("新規 instanceId を付与:", selectedDetailCard.instanceId);
   }
 
-  // 2. 手札→場の特別処理
+  // 3. 特別処理：手札 → 場
   if (currentZoneName === "手札" && destination === "場") {
     playCardFromHandToField(selectedDetailCard, currentZoneName);
     return;
   }
 
-  // 3. 通常移動
+  // 4. 通常のゾーン移動
   const targetZone = zones[destination];
   if (!targetZone) {
     console.warn("無効な移動先:", destination);
@@ -757,6 +767,8 @@ function moveCardToLocation(destination) {
   closeCardDetail();
   afterCardMoveUpdate(currentZoneName, destination);
 }
+
+
 
 
 // カードのUIを更新
@@ -1004,7 +1016,8 @@ function updateCardZoneDisplay(zoneKey) {
     手札: { array: playerState.playerHand, container: "player-hand-icon", color: "#a88" },
     デッキ: { array: playerState.drawPile, container: "player-deck-card", color: "#ffec00" },
     捨て札: { array: playerState.graveyard, container: "player-discard-icon", color: "#ff5555" },
-    EXデッキ: { array: playerState.exDeck, container: "player-ex-card", color: "#00c3ff" }
+    EXデッキ: { array: playerState.exDeck, container: "player-ex-card", color: "#00c3ff" },
+    トークン: { array: tokenCard, container: "", color: "#000000" }
   };
 
   const zone = zoneMap[zoneKey];
