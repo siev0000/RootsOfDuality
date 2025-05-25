@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('お知らせ 取得:', notifications);
     abilityDetails = await loadAbilityDetails()
 
+    console.log('abilityDetails 取得:', abilityDetails);
+
     // タブと内容を初期化
     generateNotificationTabs();
     await getUserDecks()
@@ -84,18 +86,59 @@ function initializeSelectedDeck() {
     selectedDeckName = localStorage.getItem('selectedDeckName') || null;
 }
 // 能力一覧を取得する関数（data/abilities.json）
+// async function loadAbilityDetails() {
+//   try {
+//     const response = await fetch('./data/abilities.json');
+//     const json = await response.json();
+
+//     if (!Array.isArray(json)) {
+//       console.error('abilities.json の形式が不正です');
+//       return false;
+//     }
+
+//     console.log('能力詳細データを取得しました:', json);
+//     return json;
+
+//   } catch (error) {
+//     console.error('能力詳細取得エラー:', error);
+//     return false;
+//   }
+// }
 async function loadAbilityDetails() {
   try {
-    const res = await fetch('./data/abilities.json');
-    const json = await res.json();
+    const response = await fetch('./data/abilities.json');
+    const rawList = await response.json();
 
-    if (!Array.isArray(json)) {
-      console.error('abilities.json の形式が不正です');
+    if (!Array.isArray(rawList)) {
+      console.error('abilities.json の形式が不正です（配列ではありません）');
       return false;
     }
 
-    console.log('能力詳細データを取得しました:', abilityDetails);
-    return json;
+    const grouped = {};
+    let currentGroup = '未分類';
+
+    for (const row of rawList) {
+      const name = row["能力名"]?.trim();
+
+      // 無効な名前を除外：null/空文字/'-'のみ（または複数）
+      if (!name || /^-+$/.test(name)) continue;
+
+      // === アタック系 === のような見出し行なら分類名とみなす
+      const match = name.match(/^===\s*(.+?)\s*===$/);
+      if (match) {
+        currentGroup = match[1];
+        if (!grouped[currentGroup]) grouped[currentGroup] = [];
+        continue;
+      }
+
+      // 通常のデータ行は現在の分類に追加
+      if (!grouped[currentGroup]) grouped[currentGroup] = [];
+      grouped[currentGroup].push(row);
+    }
+
+    console.log('✅ abilityDetails 分類完了:', grouped);
+    return grouped;
+
 
   } catch (error) {
     console.error('能力詳細取得エラー:', error);
@@ -369,35 +412,35 @@ function displayAbilityDetails() {
 
   container.innerHTML = `<h2>能力一覧</h2>`;
 
-  if (!Array.isArray(abilityDetails) || abilityDetails.length === 0) {
+  if (!abilityDetails || typeof abilityDetails !== 'object') {
     container.innerHTML += "<p>能力データがありません。</p>";
     return;
   }
 
-  const list = document.createElement('ul');
-  list.className = 'ability-list';
+  console.log("能力一覧表示 :", abilityDetails);
 
-  abilityDetails.forEach(entry => {
-    const name = entry["能力名"]?.trim();
-    const effect = entry["効果"]?.trim();
+  // 分類ごとに表示
+  for (const [groupName, entries] of Object.entries(abilityDetails)) {
+    const groupHeader = document.createElement('h3');
+    groupHeader.textContent = groupName;
+    container.appendChild(groupHeader);
 
-    if (!name) return;
+    const list = document.createElement('ul');
+    list.className = 'ability-list';
 
-    const li = document.createElement('li');
+    entries.forEach(entry => {
+      const name = entry["能力名"]?.trim();
+      const effect = entry["効果"]?.trim();
 
-    if (name.startsWith("===")) {
-      // 区切り見出し
-      li.textContent = name.replace(/^=+/, '').trim(); // 「=== ドロー系 ===」→「ドロー系」
-      li.className = 'ability-section-header';
-    } else {
-      // 通常項目
+      if (!name || name.startsWith("===")) return; // 見出し行は除外済み
+
+      const li = document.createElement('li');
       li.textContent = `${name}：${effect || ""}`;
-    }
+      list.appendChild(li);
+    });
 
-    list.appendChild(li);
-  });
-
-  container.appendChild(list);
+    container.appendChild(list);
+  }
 }
 
 
@@ -688,16 +731,16 @@ function createCardElement(card, options = {}) {
             existingButtons.forEach(btn => btn.remove());
             openDeckDetail(card)
             // 能力説明の切り替え
-            const abilityText = cardElement.querySelector('.ability-description');
-            const abilityContainerEl = cardElement.querySelector('.ability-container');
-            if (abilityText) {
-                abilityText.textContent = isSelected ? (card.能力説明 || '') : '';
-            }
-            if (abilityContainerEl) {
-                abilityContainerEl.style.backgroundColor = isSelected
-                    ? 'rgba(255, 255, 255, 0.8)'
-                    : 'transparent';
-            }
+            // const abilityText = cardElement.querySelector('.ability-description');
+            // const abilityContainerEl = cardElement.querySelector('.ability-container');
+            // if (abilityText) {
+            //     abilityText.textContent = isSelected ? (card.能力説明 || '') : '';
+            // }
+            // if (abilityContainerEl) {
+            //     abilityContainerEl.style.backgroundColor = isSelected
+            //         ? 'rgba(255, 255, 255, 0.8)'
+            //         : 'transparent';
+            // }
 
             if (isSelected) {
                 if (options.onAdd) {

@@ -301,8 +301,67 @@ function calculateFontSize(name) {
 //カード情報パネルを出す
 function openDeckDetail(card) {
     document.getElementById("deck-detail-name").textContent = `名前: ${card.名前} / 職業: ${card.職業1 || ''} / 種族: ${card.種族1 || ''}`;
-    document.getElementById("deck-detail-ability").textContent = `効果: ${card.能力説明 || 'なし'}`;
+    document.getElementById("deck-detail-data").textContent = `効果: ${card.能力説明 || 'なし'}`;
 }
+
+function openDeckDetail(card) {
+  const detailName = document.getElementById("deck-detail-name");
+  const detailAbility = document.getElementById("deck-detail-data");
+
+  detailName.textContent =
+    `名前: ${card.名前} / 職業: ${card.職業1 || ''} / 種族: ${card.種族1 || ''}`;
+
+  const rawText = (card.能力説明 || "効果なし").replace(/\n/g, " ");
+  const rawLines = rawText.split(/\s+\/\s+/).map(text => ({ text, isSub: false }));
+
+  const getAbilityNames = (group) =>
+    abilityDetails[group]?.map(row => row.能力名).filter(Boolean) || [];
+
+  const highlightMap = {
+    ability: getAbilityNames("条件名"),
+    attack: getAbilityNames("アタック系"),
+    defense: getAbilityNames("防御系"),
+  };
+
+  console.log("📌 highlightMap（強調対象）:");
+  for (const [key, list] of Object.entries(highlightMap)) {
+    console.log(`  highlight-${key}:`, list);
+  }
+
+  detailAbility.innerHTML = rawLines
+  .map(({ text }) => {
+    let line = text;
+
+    for (const [key, nameList] of Object.entries(highlightMap)) {
+      const className = `highlight-${key}`;
+      nameList.forEach(name => {
+        if (!name || /[<>"=]/.test(name)) return; // 安全確認
+
+        const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(escaped, "g");
+
+        // タグがすでに入っていたら2回目の置換を防止
+        if (!line.includes(`>${name}</span>`)) {
+          line = line.replace(regex, `<span class="${className}">${name}</span>`);
+        }
+      });
+    }
+
+    // 英単語は直接強調してOK
+    line = line
+      .replace(/\bATK\b/g, `<span class="stat-atk">ATK</span>`)
+      .replace(/\bHP\b/g, `<span class="stat-hp">HP</span>`);
+
+    return `<div class="ability-line">${line}</div>`;
+  })
+  .join("");
+
+}
+
+
+
+
+
 
 // デッキIDを指定して取得
 function getDeckById(deckId) {

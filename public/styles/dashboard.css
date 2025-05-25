@@ -214,6 +214,18 @@ body {
     display: block; /* アクティブ状態で表示 */
 }
 
+.ability-list {
+  padding-left: 1.2em;
+  margin-bottom: 1.5em;
+}
+.ability-list li {
+  margin-bottom: 0.4em;
+}
+.ability-section-header {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-top: 1em;
+}
 
 /* +-ボタン ==========================================*/
 .card-add, .card-remove {
