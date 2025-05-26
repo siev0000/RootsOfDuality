@@ -617,10 +617,11 @@ async function adjustCardStat(stat, delta) {
 
       // ステータス更新（1回のみ）
       if (stat === "HP") {
-        updatedCard.HP = (updatedCard.HP || 0) + delta;
+        updatedCard.HP = Number(updatedCard.HP || 0) + delta;
       } else if (stat === "ATK") {
-        updatedCard.ATK = (updatedCard.ATK || 0) + delta;
+        updatedCard.ATK = Number(updatedCard.ATK || 0) + delta;
       }
+
       break;
     }
   }
