@@ -359,7 +359,7 @@ function generateNotificationTabs() {
 
   const keys = Object.keys(notifications[0]);
   keys.push("能力一覧"); // ← abilityDetails用のタブを追加
-
+  keys.push("ルール"); // ← abilityDetails用のタブを追加
   console.log("通知データのキー一覧:", keys);
 
   tabContainer.innerHTML = ''; // 初期化
@@ -394,7 +394,10 @@ function displayNotificationsByKey(key) {
     displayAbilityDetails(); // 別関数で表示
     return;
   }
-
+  if (key === "ルール") {
+    displayRules(); // 別関数で表示
+    return;
+  }
   let hasContent = false;
 
   notifications.forEach((entry, index) => {
@@ -416,7 +419,7 @@ function displayNotificationsByKey(key) {
   }
 }
 
-function displayAbilityDetails() {
+async function displayAbilityDetails() {
   const container = document.getElementById('notification-content');
   if (!container) return;
 
@@ -450,6 +453,21 @@ function displayAbilityDetails() {
     });
 
     container.appendChild(list);
+  }
+}
+
+// ルール
+async function displayRules() {
+  const container = document.getElementById('notification-content');
+  container.innerHTML = `<h2>ルール</h2><p>読み込み中...</p>`;
+
+  try {
+    const res = await fetch('/data/カードゲーム_基本ルール.txt');
+    const text = await res.text();
+    container.innerHTML = `<h2>ルール</h2><pre class="rules-text">${text}</pre>`;
+  } catch (err) {
+    container.innerHTML = '<p>ルールの読み込みに失敗しました。</p>';
+    console.error('ルール読み込み失敗:', err);
   }
 }
 

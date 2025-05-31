@@ -28,7 +28,7 @@ let matchSettings = {
   maxHP: 30,
   initialPP: 1,
   ppGainPerTurn: 1,
-  initialHand: 3,
+  initialHand: 4,
   maxPP: 10,
   firstPlayerMethod: "host", // "host" / "guest" / "random"
 	firstPlayerDraws: true,

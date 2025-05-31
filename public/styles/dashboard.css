@@ -27,7 +27,7 @@ body {
 /* 縦長レイアウトの枠 */
 .content {
     width: 100%; /* 横幅を100%に設定 */
-    height: 90%;
+    height: 85%;
     position: relative; /* ← これがないと top は無効 */
     top: 5%;
     max-width: 450px; /* 必要に応じて最大幅を設定 */
