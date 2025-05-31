@@ -312,3 +312,20 @@ body {
     margin-top: 4px;
 }
 
+.icon-inline {
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+}
+
+.rules-text {
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.highlight-heading {
+  color: #fff200; /* 深めの緑など目立つ色に */
+  font-weight: bold;
+  font-size: 140%;
+}

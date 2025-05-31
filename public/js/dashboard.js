@@ -463,13 +463,21 @@ async function displayRules() {
 
   try {
     const res = await fetch('/data/カードゲーム_基本ルール.txt');
-    const text = await res.text();
-    container.innerHTML = `<h2>ルール</h2><pre class="rules-text">${text}</pre>`;
+    let text = await res.text();
+
+    // 🌿 を画像に置換
+    text = text.replace(/🌿/g, `<img src="/assets/images/cost/プレイヤーコスト.webp" alt="🌿" class="icon-inline">`);
+
+    // 【～】で囲まれた部分を色付きに変換（HTMLタグで囲む）
+    text = text.replace(/【(.*?)】/g, `<span class="highlight-heading">【$1】</span>`);
+
+    container.innerHTML = `<pre class="rules-text">${text}</pre>`;
   } catch (err) {
     container.innerHTML = '<p>ルールの読み込みに失敗しました。</p>';
     console.error('ルール読み込み失敗:', err);
   }
 }
+
 
 
 function toggleNotificationContent(shouldShow) {
