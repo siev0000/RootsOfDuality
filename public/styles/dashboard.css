@@ -186,10 +186,9 @@ body {
 
 /* コンテンツ表示エリアのスタイル */
 #notification-content {
-    padding: 20px;
+    padding: 5px;
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
-    border-radius: 8px;
     max-height: 100%; /* 高さを制限 */
     overflow-y: auto; /* 縦スクロールを有効化 */
 }
