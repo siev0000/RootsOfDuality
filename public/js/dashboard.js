@@ -738,11 +738,17 @@ function createCardElement(card, options = {}) {
     // フォントサイズを状況によって調整
     const nameElement = iconNameContainer.querySelector('.character-name');
     if (nameElement) {
-        nameElement.style.fontSize = extraClass.includes('deck-card') || extraClass.includes('pool-card') 
-            ? '70%' 
-            : '50%';
+      const nameLength = card.名前 ? card.名前.length : 0;
+
+      let fontPercent = 70; // 初期値
+
+      if (nameLength > 5) {
+          const overLength = nameLength - 5;
+          const reduceStep = Math.floor(overLength / 3) * 10;
+          fontPercent = Math.max(50, fontPercent - reduceStep); // 最小30%
+      }
+      nameElement.style.fontSize = `${fontPercent}%`;
     }
-    
     cardElement.appendChild(iconNameContainer);
 
     // ステータス
