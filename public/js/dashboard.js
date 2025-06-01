@@ -748,11 +748,21 @@ function createCardElement(card, options = {}) {
     // ステータス
     const statsContainer = document.createElement('div');
     statsContainer.className = 'stats-container';
+    let costIcon = 'card/コスト.webp'; // デフォルト 'cost/プレイヤーコスト.webp'
+    if (card.分類1 === 'キャラ') {
+      costIcon = 'card/キャラ.webp';
+    } else if (card.分類1 === '施設') {
+      costIcon = 'card/施設.webp';
+    } else if (card.分類1 === 'その他') {
+      costIcon = 'card/コスト.webp';
+    }
+
     statsContainer.innerHTML = `
-      ${card.コスト ? `<span class="card-cost">${card.コスト}</span>` : ''}
+      ${card.コスト ? `<span class="card-cost" style="background-image: url('/assets/images/${costIcon}');">${card.コスト}</span>` : ''}
       ${card.HP ? `<span class="card-hp">${card.HP}</span>` : ''}
       ${card.ATK ? `<span class="card-atk">${card.ATK}</span>` : ''}
     `;
+
 
     cardElement.appendChild(statsContainer);
 

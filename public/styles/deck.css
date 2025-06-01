@@ -262,7 +262,7 @@
     font-weight: 900; /* 太さを強調 */
     width: 72%;
     max-height: 40%;
-    margin-left: 15%;
+    margin-left: 18%;
     margin-top: -18%;
     /* margin-bottom: 0; */
     white-space: nowrap; /* 名前が改行されないように設定 */
@@ -293,8 +293,10 @@
     position: absolute;
     top: 0%;
     left: 0%;
-    color: black;
-    text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white; /* 白い輪郭 */
+    color: white;
+    text-shadow: 2px 2px 3px black, -2px -2px 3px black, 2px -2px 3px black, -2px 2px 3px black;
+    /* color: black;
+    text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white; */
     background-image: url('/assets/images/card/コスト.webp'); /* 背景画像 */
     background-size: 100%; /* 親要素に対する割合で指定 */
     background-repeat: no-repeat;

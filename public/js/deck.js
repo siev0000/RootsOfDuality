@@ -300,7 +300,7 @@ function calculateFontSize(name) {
 
 //カード情報パネルを出す
 function openDeckDetail(card) {
-    document.getElementById("deck-detail-name").textContent = `名前: ${card.名前} / 職業: ${card.職業1 || ''} / 種族: ${card.種族1 || ''}`;
+    document.getElementById("deck-detail-name").textContent = `${card.分類1}: ${card.名前} / 職業: ${card.職業1 || ''} / 種族: ${card.種族1 || ''}`;
     document.getElementById("deck-detail-data").textContent = `効果: ${card.能力説明 || 'なし'}`;
 }
 
@@ -309,7 +309,7 @@ function openDeckDetail(card) {
   const detailAbility = document.getElementById("deck-detail-data");
 
   detailName.textContent =
-    `名前: ${card.名前} / 職業: ${card.職業1 || ''} / 種族: ${card.種族1 || ''}`;
+    `${card.分類1}: ${card.名前} / 職業: ${card.職業1 || ''} / 種族: ${card.種族1 || ''}`;
 
   const rawText = (card.能力説明 || "効果なし").replace(/\n/g, " ");
   const rawLines = rawText.split(/\s+\/\s+/).map(text => ({ text, isSub: false }));
