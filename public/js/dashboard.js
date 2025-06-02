@@ -702,7 +702,37 @@ function createCardElement(card, options = {}) {
     // レイヤー構築
     const rarityLayer = document.createElement('div');
     rarityLayer.className = 'card-rarity-layer';
-    rarityLayer.style.backgroundImage = `url('/assets/images/card/${encodeURIComponent(card.レアリティ)}カード3.webp')`;
+    let type;
+    switch (card.分類1) {
+      case "キャラ":
+        type = "キャラ";
+        break;
+      case "施設":
+        type = "施設";
+        break;
+      case "トークン":
+        type = "トークン";
+        break;
+      default:
+        type = "マジック";
+        break;
+    }
+
+    // 背景画像の設定
+    rarityLayer.style.backgroundImage = `url('/assets/images/card/${type}.webp')`;
+    cardElement.appendChild(rarityLayer);
+
+    // === 属性（属性1）レイヤー：キャラのときのみ ===
+    if (type === "キャラ") {
+      const attributeLayer = document.createElement('div');
+      attributeLayer.className = 'card-attribute-layer';
+
+      const attr = card.属性 || '無'; // 属性がなければ「無」
+      attributeLayer.style.backgroundImage = `url('/assets/images/card/${encodeURIComponent(attr)}.webp')`;
+
+      cardElement.appendChild(attributeLayer);
+    }
+
 
     const backgroundLayer = document.createElement('div');
     backgroundLayer.className = 'card-illustration-layer';
@@ -717,8 +747,6 @@ function createCardElement(card, options = {}) {
     };
     img.src = imageUrl;
     
-
-    cardElement.appendChild(rarityLayer);
     cardElement.appendChild(backgroundLayer);
 
     // 名前とアイコン
@@ -754,14 +782,15 @@ function createCardElement(card, options = {}) {
     // ステータス
     const statsContainer = document.createElement('div');
     statsContainer.className = 'stats-container';
-    let costIcon = 'card/コスト.webp'; // デフォルト 'cost/プレイヤーコスト.webp'
-    if (card.分類1 === 'キャラ') {
-      costIcon = 'card/キャラ.webp';
-    } else if (card.分類1 === '施設') {
-      costIcon = 'card/施設.webp';
-    } else if (card.分類1 === 'その他') {
-      costIcon = 'card/コスト.webp';
-    }
+    let costIcon = 'cost/プレイヤーコスト.webp'; // デフォルト 
+    // let costIcon = 'card/コスト.webp'; // デフォルト 'cost/プレイヤーコスト.webp'
+    // if (card.分類1 === 'キャラ') {
+    //   costIcon = 'card/キャラ.webp';
+    // } else if (card.分類1 === '施設') {
+    //   costIcon = 'card/施設.webp';
+    // } else if (card.分類1 === 'その他') {
+    //   costIcon = 'card/コスト.webp';
+    // }
 
     statsContainer.innerHTML = `
       ${card.コスト ? `<span class="card-cost" style="background-image: url('/assets/images/${costIcon}');">${card.コスト}</span>` : ''}

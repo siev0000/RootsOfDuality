@@ -193,6 +193,21 @@
     pointer-events: none;
     border-radius: 8px;
 }
+.card-attribute-layer {
+    position: absolute;
+    top: 18%;
+    /* width: 80%;
+    height: 83%; */
+    width: 73%;
+    height: 75%;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border-radius: 8px;
+    z-index: 1;
+    pointer-events: none;
+}
+
 
 .icon-name-container,
 .ability-container {
