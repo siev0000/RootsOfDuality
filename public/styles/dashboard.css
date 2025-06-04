@@ -324,6 +324,14 @@ body {
   white-space: pre-wrap;
 }
 
+.ex-icon {
+  height: 2em;
+  vertical-align: middle;
+  margin-left: 4%;
+  margin-top: -3%;
+}
+
+
 .highlight-heading {
   color: #fff200; /* 深めの緑など目立つ色に */
   font-weight: bold;

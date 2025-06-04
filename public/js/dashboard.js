@@ -717,6 +717,24 @@ function createCardElement(card, options = {}) {
         type = "マジック";
         break;
     }
+    // if (card.レアリティ === "EX") {
+    //   type = "EX"
+    // }else{
+    //   switch (card.分類1) {
+    //     case "キャラ":
+    //       type = "キャラ";
+    //       break;
+    //     case "施設":
+    //       type = "施設";
+    //       break;
+    //     case "トークン":
+    //       type = "トークン";
+    //       break;
+    //     default:
+    //       type = "マジック";
+    //       break;
+    //   }
+    // }
 
     // 背景画像の設定
     rarityLayer.style.backgroundImage = `url('/assets/images/card/${type}.webp')`;
@@ -752,9 +770,15 @@ function createCardElement(card, options = {}) {
     // 名前とアイコン
     const iconNameContainer = document.createElement('div');
     iconNameContainer.className = 'icon-name-container';
+
+    const exIcon = card.レアリティ === "EX"
+    ? `<div class="race-icon icon-mask" style="background-image: url('/assets/images/card/EXアイコン2.webp');"></div>`
+    : '';
+    
     iconNameContainer.innerHTML = `
         <p class="character-name">${card.名前}</p>
         <div class="icon-container">
+            ${exIcon}
             ${card.種族1 ? `<div class="race-icon icon-mask" style="background-image: url('/assets/images/role/${card.種族1}.webp');"></div>` : ''}
             ${card.種族2 ? `<div class="race-icon icon-mask" style="background-image: url('/assets/images/role/${card.種族2}.webp');"></div>` : ''}
             ${card.職業1 ? `<div class="class-icon icon-mask" style="background-image: url('/assets/images/role/${card.職業1}.webp');"></div>` : ''}
@@ -808,7 +832,7 @@ function createCardElement(card, options = {}) {
 
     const abilityText = document.createElement('p');
     abilityText.className = 'ability-description';
-    abilityText.textContent = (mode === 'full') ? (card.能力説明 || '') : '';
+    // abilityText.textContent = (mode === 'full') ? (card.能力説明 || '') : '';
     abilityContainer.appendChild(abilityText);
     cardElement.appendChild(abilityContainer);
 
