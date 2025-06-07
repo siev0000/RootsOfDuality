@@ -1,3 +1,4 @@
 # バッチファイルを無視
 *.bat
 node_modules/
+public/data/cardsGPT用.json
