@@ -139,26 +139,6 @@ async function fetchCardList() {
     if (!Array.isArray(result)) {
       console.error('cards.json の形式が不正です');
       alert('カードリストを取得できませんでした。');
-      return [];
-    }
-
-    console.log('カードリストを取得しました:', result);
-    return result;
-
-  } catch (error) {
-    console.error('カードリスト取得エラー:', error);
-    alert('カードリストの取得中にエラーが発生しました。');
-    return [];
-  }
-}
-async function fetchCardList() {
-  try {
-    const response = await fetch('./data/cards.json');
-    const result = await response.json();
-
-    if (!Array.isArray(result)) {
-      console.error('cards.json の形式が不正です');
-      alert('カードリストを取得できませんでした。');
       return { cards: [], tokenCard: [] };
     }
 
@@ -663,6 +643,7 @@ function adjustCardCount(cardId, action) {
     }
 
     updateDeckHeader();
+    // renderCardPool()
     restoreDeckButtonStates();
     calculateCostBreakdown(deck);
 }
@@ -717,24 +698,6 @@ function createCardElement(card, options = {}) {
         type = "マジック";
         break;
     }
-    // if (card.レアリティ === "EX") {
-    //   type = "EX"
-    // }else{
-    //   switch (card.分類1) {
-    //     case "キャラ":
-    //       type = "キャラ";
-    //       break;
-    //     case "施設":
-    //       type = "施設";
-    //       break;
-    //     case "トークン":
-    //       type = "トークン";
-    //       break;
-    //     default:
-    //       type = "マジック";
-    //       break;
-    //   }
-    // }
 
     // 背景画像の設定
     rarityLayer.style.backgroundImage = `url('/assets/images/card/${type}.webp')`;
@@ -838,48 +801,42 @@ function createCardElement(card, options = {}) {
 
     // 編集可能なカード（プール・デッキ）
     if (extraClass.includes('deck-card') || extraClass.includes('pool-card')) {
-        cardElement.addEventListener('click', () => {
-            const isSelected = cardElement.classList.toggle('selected');
-            const existingButtons = cardElement.querySelectorAll('.card-add, .card-remove');
-            existingButtons.forEach(btn => btn.remove());
-            openDeckDetail(card)
-            // 能力説明の切り替え
-            // const abilityText = cardElement.querySelector('.ability-description');
-            // const abilityContainerEl = cardElement.querySelector('.ability-container');
-            // if (abilityText) {
-            //     abilityText.textContent = isSelected ? (card.能力説明 || '') : '';
-            // }
-            // if (abilityContainerEl) {
-            //     abilityContainerEl.style.backgroundColor = isSelected
-            //         ? 'rgba(255, 255, 255, 0.8)'
-            //         : 'transparent';
-            // }
+      cardElement.addEventListener('click', () => {
+          // 他のカードの選択状態を解除
+          const allSelected = document.querySelectorAll('.deck-card.selected, .pool-card.selected');
+          allSelected.forEach(el => {
+              el.classList.remove('selected');
+              el.querySelectorAll('.card-add, .card-remove').forEach(btn => btn.remove());
+          });
 
-            if (isSelected) {
-                if (options.onAdd) {
-                    const addButton = document.createElement('button');
-                    addButton.className = 'card-add';
-                    addButton.textContent = '+';
-                    addButton.onclick = (e) => {
-                        e.stopPropagation();
-                        options.onAdd(card);
-                    };
-                    cardElement.appendChild(addButton);
-                }
+          // このカードだけを選択状態にする
+          cardElement.classList.add('selected');
+          openDeckDetail(card);
 
-                if (options.onRemove) {
-                    const removeButton = document.createElement('button');
-                    removeButton.className = 'card-remove';
-                    removeButton.textContent = '−';
-                    removeButton.onclick = (e) => {
-                        e.stopPropagation();
-                        options.onRemove(card);
-                    };
-                    cardElement.appendChild(removeButton);
-                }
-            }
-        });
+          if (options.onAdd) {
+              const addButton = document.createElement('button');
+              addButton.className = 'card-add';
+              addButton.textContent = '+';
+              addButton.onclick = (e) => {
+                  e.stopPropagation();
+                  options.onAdd(card);
+              };
+              cardElement.appendChild(addButton);
+          }
+
+          if (options.onRemove) {
+              const removeButton = document.createElement('button');
+              removeButton.className = 'card-remove';
+              removeButton.textContent = '−';
+              removeButton.onclick = (e) => {
+                  e.stopPropagation();
+                  options.onRemove(card);
+              };
+              cardElement.appendChild(removeButton);
+          }
+      });
     }
+
 
     // 通常クリック処理
     if (onClick && !extraClass.includes('deck-card') && !extraClass.includes('pool-card')) {

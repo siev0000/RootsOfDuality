@@ -299,11 +299,10 @@ function calculateFontSize(name) {
 }
 
 //カード情報パネルを出す
-function openDeckDetail(card) {
-    document.getElementById("deck-detail-name").textContent = `${card.分類1}: ${card.名前} / 職業: ${card.職業1 || ''} / 種族: ${card.種族1 || ''}`;
-    document.getElementById("deck-detail-data").textContent = `効果: ${card.能力説明 || 'なし'}`;
-}
-
+// function openDeckDetail(card) {
+//     document.getElementById("deck-detail-name").textContent = `${card.分類1}: ${card.名前} / 職業: ${card.職業1 || ''} / 種族: ${card.種族1 || ''}`;
+//     document.getElementById("deck-detail-data").textContent = `効果: ${card.能力説明 || 'なし'}`;
+// }
 function openDeckDetail(card) {
   const detailName = document.getElementById("deck-detail-name");
   const detailAbility = document.getElementById("deck-detail-data");
@@ -355,7 +354,12 @@ function openDeckDetail(card) {
     return `<div class="ability-line">${line}</div>`;
   })
   .join("");
-
+  
+  const panel = document.getElementById("deck-detail-panel");
+  if (panel) {
+    const imageUrl = `url('/assets/images/illust/${card.画像}.webp')`;
+    panel.style.setProperty("--panel-background-image", imageUrl);
+  }
 }
 
 

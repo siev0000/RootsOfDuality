@@ -358,17 +358,48 @@
     z-index: 2;
 }
 
-#deck-detail-panel {
+/* =============================== */
+/* #deck-detail-panel {
     width: 100%;
     max-width: 100%;
-    height: 15%;
+    height: 11%;
     background-color: #2d2d2d;
     border-top: 2px solid #aaa;
     box-sizing: border-box;
     font-size: 0.9rem;
-    color: #ffffff;
-    overflow-y: auto;
-  }
+} */
+#deck-detail-panel {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: 15%;
+  background-color: #2d2d2d;
+  border-top: 2px solid #aaa;
+  box-sizing: border-box;
+  font-size: 0.9rem;
+  color: #ffffff;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#deck-detail-panel::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: var(--panel-background-image);
+  background-size: contain;            /* 縦横比を保持して縮小表示 */
+  background-position: top center;     /* 上部を表示し中央に配置 */
+  background-repeat: no-repeat;        /* 横に並ばない */
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#deck-detail-panel > * {
+  position: relative;
+  z-index: 1;
+}
+/* =============================== */
 
 .ability-container {
     margin: 4%;
