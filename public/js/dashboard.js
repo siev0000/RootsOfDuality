@@ -23,7 +23,7 @@ let effectHTMLLoaded = false; // 初回フラグ
 
 // 起動時の処理
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('ユーザー情報:', { username });
+    console.log('ユーザー情報:', { userData });
     console.log('音量設定:', volumeSettings);
 
     if (volumeSettings) {
@@ -83,7 +83,6 @@ document.getElementById("open-filter-modal-button").onclick = () => {
 };
   
 function initializeSelectedDeck() {
-    selectedDeckId = localStorage.getItem('selectedDeckId') || null;
     selectedDeckName = localStorage.getItem('selectedDeckName') || null;
 }
 
@@ -516,7 +515,6 @@ function displayDecks() {
     const deckContainer = document.getElementById('deck-container');
     if (!deckContainer) return;
 
-    const selectedDeckId = localStorage.getItem('selectedDeckId');
     deckContainer.innerHTML = '';
 
     // 新規作成カード
@@ -533,88 +531,90 @@ function displayDecks() {
         return;
     }
 
-deckList.forEach(deck => {
-    if (!deck.deck) {
-        console.warn("デッキ情報が無効なためスキップ:", deck);
-        return;
-    }
+  deckList.forEach(deck => {
+      if (!deck.deck) {
+          console.warn("デッキ情報が無効なためスキップ:", deck);
+          return;
+      }
 
-    const isSelected = (deck._id === selectedDeckId);
+      const isSelected = (deck._id === selectedDeckId);
+      console.log("selectedDeckId :\n",selectedDeckId, "\n deck._id :\n", deck._id , "\n",isSelected)
+      
 
-    const deckCard = document.createElement('div');
-    deckCard.className = 'deck-card';
-    deckCard.style.position = 'relative';
-    if (isSelected) deckCard.classList.add('selected-deck');
+      const deckCard = document.createElement('div');
+      deckCard.className = 'deck-card';
+      deckCard.style.position = 'relative';
+      if (isSelected) deckCard.classList.add('selected-deck');
 
-    // 最大コストのキャラカードを取得
-    let maxCard = null;
-    let maxCost = -1;
+      // 最大コストのキャラカードを取得
+      let maxCard = null;
+      let maxCost = -1;
 
-    // 種族・分類・EX カウント用
-    const typeCounts = { キャラ: 0, 施設: 0, その他: 0 };
-    const raceCounts = {};
-    let exCount = 0;
+      // 種族・分類・EX カウント用
+      const typeCounts = { キャラ: 0, 施設: 0, その他: 0 };
+      const raceCounts = {};
+      let exCount = 0;
 
-    for (const [name, count] of Object.entries(deck.deck)) {
-        const cardData = cardList.find(c => c.名前 === name);
-        if (!cardData) continue;
+      for (const [name, count] of Object.entries(deck.deck)) {
+          const cardData = cardList.find(c => c.名前 === name);
+          if (!cardData) continue;
 
-        // 最大コストキャラ
-        if (cardData.分類1 === 'キャラ' && cardData.コスト > maxCost) {
-            maxCard = cardData;
-            maxCost = cardData.コスト;
-        }
+          // 最大コストキャラ
+          if (cardData.分類1 === 'キャラ' && cardData.コスト > maxCost) {
+              maxCard = cardData;
+              maxCost = cardData.コスト;
+          }
 
-        // 分類カウント
-        const type = cardData.分類1;
-        if (type === 'キャラ' || type === '施設') {
-            typeCounts[type] += count;
-        } else {
-            typeCounts.その他 += count;
-        }
+          // 分類カウント
+          const type = cardData.分類1;
+          if (type === 'キャラ' || type === '施設') {
+              typeCounts[type] += count;
+          } else {
+              typeCounts.その他 += count;
+          }
 
-        // EXカウント
-        if (cardData.レアリティ === 'EX') {
-            exCount += count;
-        }
+          // EXカウント
+          if (cardData.レアリティ === 'EX') {
+              exCount += count;
+          }
 
-        // 種族カウント（種族1のみ）
-        if (cardData.種族1) {
-            raceCounts[cardData.種族1] = (raceCounts[cardData.種族1] || 0) + count;
-        }
-    }
+          // 種族カウント（種族1のみ）
+          if (cardData.種族1) {
+              raceCounts[cardData.種族1] = (raceCounts[cardData.種族1] || 0) + count;
+          }
+      }
 
-    // 一番多い種族を取得
-    const mostUsedRace = Object.entries(raceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'なし';
+      // 一番多い種族を取得
+      const mostUsedRace = Object.entries(raceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'なし';
 
-    // 背景設定（略）
-    if (maxCard && maxCard.画像) {
-        deckCard.style.backgroundImage = `url('/assets/images/illust/${encodeURIComponent(maxCard.画像)}.webp')`;
-        deckCard.style.backgroundSize = 'cover';
-        deckCard.style.backgroundPosition = 'center 10%';
-        deckCard.style.backgroundRepeat = 'no-repeat';
-        deckCard.style.backgroundBlendMode = 'multiply';
-        deckCard.style.backgroundColor = 'rgba(0,0,0,0.5)';
-        deckCard.style.color = '#fff';
-        deckCard.style.padding = '1em';
-        deckCard.style.borderRadius = '12px';
-    }
+      // 背景設定（略）
+      if (maxCard && maxCard.画像) {
+          deckCard.style.backgroundImage = `url('/assets/images/illust/${encodeURIComponent(maxCard.画像)}.webp')`;
+          deckCard.style.backgroundSize = 'cover';
+          deckCard.style.backgroundPosition = 'center 10%';
+          deckCard.style.backgroundRepeat = 'no-repeat';
+          deckCard.style.backgroundBlendMode = 'multiply';
+          deckCard.style.backgroundColor = 'rgba(0,0,0,0.5)';
+          deckCard.style.color = '#fff';
+          deckCard.style.padding = '1em';
+          deckCard.style.borderRadius = '12px';
+      }
 
-    // 表示内容 <p>デッキID: ${deck._id}</p>
-    const totalCards = Object.values(deck.deck).reduce((a, b) => a + b, 0);
-    deckCard.innerHTML = `
-        <div class="deck-checkmark" onclick="setSelectedDeck('${deck._id}')">
-            ${isSelected ? '✔ 使用中' : '□ 使用'}
-        </div>
-        <h3>${deck.name}</h3>
-        <p>主要種族: ${mostUsedRace}</p>
-        <p>デッキ枚数: ${totalCards-exCount} ${exCount > 0 ? `EX: ${exCount}枚` : ''}</p>
-        <p>構成: キャラ${typeCounts.キャラ} / 施設${typeCounts.施設} / その他${typeCounts.その他}</p>
-        <button onclick="getDeckById('${deck._id}')">デッキを見る</button>
-    `;
+      // 表示内容 <p>デッキID: ${deck._id}</p>
+      const totalCards = Object.values(deck.deck).reduce((a, b) => a + b, 0);
+      deckCard.innerHTML = `
+          <div class="deck-checkmark" onclick="setSelectedDeck('${deck._id}')">
+              ${isSelected ? '✔ 使用中' : '□ 使用'}
+          </div>
+          <h3>${deck.name}</h3>
+          <p>主要種族: ${mostUsedRace}</p>
+          <p>デッキ枚数: ${totalCards-exCount} ${exCount > 0 ? `EX: ${exCount}枚` : ''}</p>
+          <p>構成: キャラ${typeCounts.キャラ} / 施設${typeCounts.施設} / その他${typeCounts.その他}</p>
+          <button onclick="getDeckById('${deck._id}')">デッキを見る</button>
+      `;
 
-    deckContainer.appendChild(deckCard);
-});
+      deckContainer.appendChild(deckCard);
+  });
 
 }
 
