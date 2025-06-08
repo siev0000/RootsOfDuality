@@ -694,23 +694,51 @@ function renderCardMoveOptions(currentLocation) {
   const fieldLimit = 6;
 
   targetZones.forEach(dest => {
-    const btn = document.createElement("button");
-    btn.textContent = `${dest}に移動`;
-    btn.onclick = () => {
-      if (dest === "場" && (playerState.field?.length || 0) >= fieldLimit) {
-        alert("フィールドが満杯です。カードをこれ以上配置できません。");
-        return;
-      }
+  const btn = document.createElement("button");
+  btn.textContent = `${dest}に移動`;
+
+  btn.onclick = () => {
+    if (dest === "場" && (playerState.field?.length || 0) >= fieldLimit) {
+      alert("フィールドが満杯です。カードをこれ以上配置できません。");
+      return;
+    }
+
+    if (dest === "デッキ") {
+      // モーダルで上/下選択
+      openUniversalModal({
+        title: "デッキに移動",
+        content: "カードをデッキのどこに追加しますか？",
+        buttons: [
+          {
+            label: "上に追加",
+            onClick: () => moveCardToLocation("デッキ", { position: "top" })
+          },
+          {
+            label: "下に追加",
+            onClick: () => moveCardToLocation("デッキ", { position: "bottom" })
+          },
+          {
+            label: "キャンセル",
+            onClick: () => {} // 何もしない
+          }
+        ],
+        vertical: false,
+        backgroundOpacity: 0.9
+      });
+    } else {
       moveCardToLocation(dest);
-    };
+    }
+  };
+
     container.appendChild(btn);
   });
+
 }
 
 // カードを移動させる
-function moveCardToLocation(destination) {
+function moveCardToLocation(destination, option = {}) {
   console.log("カードを移動させる destination : ", destination, selectedDetailCard);
-
+  const position = option.position || "bottom"; // デフォルトは下に追加
   if (!selectedDetailCard) {
     console.warn("移動対象のカードが不明です");
     return;
@@ -764,10 +792,22 @@ function moveCardToLocation(destination) {
     return;
   }
 
-  targetZone.push(selectedDetailCard);
+  // 最後の追加処理だけ変更
+  if (destination === "デッキ") {
+    if (position === "top") {
+      targetZone.unshift(selectedDetailCard); // 先頭に追加
+    } else {
+      targetZone.push(selectedDetailCard); // 末尾に追加
+    }
+  } else {
+    targetZone.push(selectedDetailCard);
+  }
+
   closeCardDetail();
   afterCardMoveUpdate(currentZoneName, destination);
+  closeUniversalModal();
 }
+
 
 
 

@@ -746,6 +746,7 @@
     overflow-y: auto; /* 縦スクロールを有効化 */
     color: #000;
     box-sizing: border-box;
+    position: relative;
 }
 
   
@@ -753,7 +754,8 @@
     position: absolute;
     right: 0.5em;
     font-size: 1.2rem;
-    color: green;
+    color: #00ff00;
+    /* green */
     cursor: pointer;
 }
 

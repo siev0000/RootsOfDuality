@@ -533,8 +533,7 @@ function displayDecks() {
         return;
     }
 
-    deckList.forEach(deck => {
-    // ❌ 無効なデッキはスキップ
+deckList.forEach(deck => {
     if (!deck.deck) {
         console.warn("デッキ情報が無効なためスキップ:", deck);
         return;
@@ -544,19 +543,78 @@ function displayDecks() {
 
     const deckCard = document.createElement('div');
     deckCard.className = 'deck-card';
+    deckCard.style.position = 'relative';
     if (isSelected) deckCard.classList.add('selected-deck');
 
+    // 最大コストのキャラカードを取得
+    let maxCard = null;
+    let maxCost = -1;
+
+    // 種族・分類・EX カウント用
+    const typeCounts = { キャラ: 0, 施設: 0, その他: 0 };
+    const raceCounts = {};
+    let exCount = 0;
+
+    for (const [name, count] of Object.entries(deck.deck)) {
+        const cardData = cardList.find(c => c.名前 === name);
+        if (!cardData) continue;
+
+        // 最大コストキャラ
+        if (cardData.分類1 === 'キャラ' && cardData.コスト > maxCost) {
+            maxCard = cardData;
+            maxCost = cardData.コスト;
+        }
+
+        // 分類カウント
+        const type = cardData.分類1;
+        if (type === 'キャラ' || type === '施設') {
+            typeCounts[type] += count;
+        } else {
+            typeCounts.その他 += count;
+        }
+
+        // EXカウント
+        if (cardData.レアリティ === 'EX') {
+            exCount += count;
+        }
+
+        // 種族カウント（種族1のみ）
+        if (cardData.種族1) {
+            raceCounts[cardData.種族1] = (raceCounts[cardData.種族1] || 0) + count;
+        }
+    }
+
+    // 一番多い種族を取得
+    const mostUsedRace = Object.entries(raceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'なし';
+
+    // 背景設定（略）
+    if (maxCard && maxCard.画像) {
+        deckCard.style.backgroundImage = `url('/assets/images/illust/${encodeURIComponent(maxCard.画像)}.webp')`;
+        deckCard.style.backgroundSize = 'cover';
+        deckCard.style.backgroundPosition = 'center 10%';
+        deckCard.style.backgroundRepeat = 'no-repeat';
+        deckCard.style.backgroundBlendMode = 'multiply';
+        deckCard.style.backgroundColor = 'rgba(0,0,0,0.5)';
+        deckCard.style.color = '#fff';
+        deckCard.style.padding = '1em';
+        deckCard.style.borderRadius = '12px';
+    }
+
+    // 表示内容 <p>デッキID: ${deck._id}</p>
+    const totalCards = Object.values(deck.deck).reduce((a, b) => a + b, 0);
     deckCard.innerHTML = `
         <div class="deck-checkmark" onclick="setSelectedDeck('${deck._id}')">
-            ${isSelected ? '✔' : '□'}
+            ${isSelected ? '✔ 使用中' : '□ 使用'}
         </div>
         <h3>${deck.name}</h3>
-        <p>カード数: ${Object.values(deck.deck).reduce((a, b) => a + b, 0)}</p>
-        <p>デッキID: ${deck._id}</p>
-        <button onclick="getDeckById('${deck._id}')">詳細</button>
+        <p>主要種族: ${mostUsedRace}</p>
+        <p>デッキ枚数: ${totalCards-exCount} ${exCount > 0 ? `EX: ${exCount}枚` : ''}</p>
+        <p>構成: キャラ${typeCounts.キャラ} / 施設${typeCounts.施設} / その他${typeCounts.その他}</p>
+        <button onclick="getDeckById('${deck._id}')">デッキを見る</button>
     `;
+
     deckContainer.appendChild(deckCard);
-    });
+});
 
 }
 

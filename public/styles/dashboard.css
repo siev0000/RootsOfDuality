@@ -32,11 +32,15 @@ body {
     top: 5%;
     max-width: 450px; /* 必要に応じて最大幅を設定 */
     max-height: 800px;
+    min-width: 385px;
+    min-height: 640px;
     aspect-ratio: 9 / 16; /* 縦横比を固定 */
     background: rgba(253, 241, 220, 0.1);
     border: 2px solid #fff;
     border-radius: 10px;
-    overflow: hidden; /* 枠内にコンテンツを収める */
+    /* 枠内にコンテンツを収める */
+    /* overflow: hidden;  */
+    overflow: auto;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
