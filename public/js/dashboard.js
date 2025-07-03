@@ -480,17 +480,17 @@ function exportUserDataToFile() {
     return;
   }
 
-  // 変更された値を反映
   userData.decks = deckList;
   userData.settings.volume = volumeSettings;
   userData.settings.selectedDeckId = selectedDeckId;
 
-  // ファイル名生成（安全な文字列に）
   const safeUsername = (userData.username || "user").replace(/[^a-zA-Z0-9_-]/g, '_');
-  const filename = `カードバトル_${safeUsername}.json`;
+  const filename = `カードバトル_${safeUsername}.save`;
 
-  // ファイルとしてダウンロード
-  const blob = new Blob([JSON.stringify(userData, null, 2)], { type: 'application/json' });
+  // 圧縮してBase64化
+  const compressed = LZString.compressToBase64(JSON.stringify(userData));
+
+  const blob = new Blob([compressed], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

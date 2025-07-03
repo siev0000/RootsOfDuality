@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
   <title>データ読み込み／新規開始</title>
   <style>
     body {
@@ -64,7 +65,7 @@
   <div class="container">
     <h2>ゲームデータを読み込む</h2>
     <div class="section form">
-      <input type="file" id="fileInput" accept="application/json">
+      <input type="file" id="fileInput" accept=".save,.json">
       <button onclick="loadFile()">読み込んで開始</button>
     </div>
 
@@ -91,18 +92,36 @@
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const data = JSON.parse(e.target.result);
+          const raw = e.target.result.trim();
+
+          let jsonStr;
+
+          // Base64として解凍を試みる（.save形式）
+          const decompressed = LZString.decompressFromBase64(raw);
+          if (decompressed) {
+            jsonStr = decompressed;
+          } else {
+            // それが失敗したら通常JSONとみなしてそのまま使う
+            jsonStr = raw;
+          }
+
+          const data = JSON.parse(jsonStr);
+
           if (!data.username || !data.settings || !Array.isArray(data.decks)) {
             throw new Error('不正なファイル形式です');
           }
+
           localStorage.setItem('userData', JSON.stringify(data));
           location.href = 'dashboard.html';
         } catch (err) {
           message.textContent = '読み込みに失敗しました：' + err.message;
         }
       };
+
       reader.readAsText(fileInput.files[0]);
     }
+
+
 
     async function startNewGame() {
       const username = document.getElementById('usernameInput').value.trim();
