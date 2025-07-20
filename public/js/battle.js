@@ -495,7 +495,8 @@ function openCardDetail(card, options = "手札") {
     return;
   }
 
-  selectedDetailCard = realCard;
+  selectedDetailCard = card;
+  console.log("カード詳細を表示する selectedDetailCard:", selectedDetailCard)
 
   const abilityEl = document.getElementById("card-detail-ability");
 
@@ -738,7 +739,7 @@ function renderCardMoveOptions(currentLocation) {
 // カードを移動させる
 function moveCardToLocation(destination, option = {}) {
   console.log("カードを移動させる destination : ", destination, selectedDetailCard);
-  const position = option.position || "bottom"; // デフォルトは下に追加
+  const position = option.position || "bottom";
   if (!selectedDetailCard) {
     console.warn("移動対象のカードが不明です");
     return;
@@ -754,9 +755,16 @@ function moveCardToLocation(destination, option = {}) {
   const allZones = Object.values(zones);
 
   let currentZoneName = findCardCurrentZone(selectedDetailCard);
+
+  // ✅ この時点で「手札 → 場」なら何も削除せず、先に処理に移る
+  if (currentZoneName === "手札" && destination === "場") {
+    playCardFromHandToField(selectedDetailCard, currentZoneName);
+    return;
+  }
+
   let found = false;
 
-  // 1. 既に instanceId がある → 通常削除処理
+  // 通常の削除処理
   if (selectedDetailCard.instanceId) {
     for (const zone of allZones) {
       const index = zone.findIndex(c => c.instanceId === selectedDetailCard.instanceId);
@@ -773,31 +781,23 @@ function moveCardToLocation(destination, option = {}) {
     }
   }
 
-  // 2. instanceId がなければここで付与（例: トークン）
+  // instanceId がないなら新規付与（トークン用）
   if (!selectedDetailCard.instanceId) {
-    selectedDetailCard.instanceId = generateUUID(); // crypto.randomUUID() ではなく代替版を使用
+    selectedDetailCard.instanceId = generateUUID();
     console.log("新規 instanceId を付与:", selectedDetailCard.instanceId);
   }
 
-  // 3. 特別処理：手札 → 場
-  if (currentZoneName === "手札" && destination === "場") {
-    playCardFromHandToField(selectedDetailCard, currentZoneName);
-    return;
-  }
-
-  // 4. 通常のゾーン移動
   const targetZone = zones[destination];
   if (!targetZone) {
     console.warn("無効な移動先:", destination);
     return;
   }
 
-  // 最後の追加処理だけ変更
   if (destination === "デッキ") {
     if (position === "top") {
-      targetZone.unshift(selectedDetailCard); // 先頭に追加
+      targetZone.unshift(selectedDetailCard);
     } else {
-      targetZone.push(selectedDetailCard); // 末尾に追加
+      targetZone.push(selectedDetailCard);
     }
   } else {
     targetZone.push(selectedDetailCard);
@@ -807,6 +807,7 @@ function moveCardToLocation(destination, option = {}) {
   afterCardMoveUpdate(currentZoneName, destination);
   closeUniversalModal();
 }
+
 
 
 
@@ -843,6 +844,7 @@ function afterCardMoveUpdate(currentZoneName, destination) {
 
 // プレイ時の処理
 function playCardFromHandToField(card, currentZoneName) {
+  const cardCost = card.コスト ?? 0;
   const availableSlots = getAvailableFieldSlots();
 
   if (availableSlots.length === 0) {
@@ -850,13 +852,25 @@ function playCardFromHandToField(card, currentZoneName) {
     return;
   }
 
+  if (playerState.pp < cardCost) {
+    alert(`PPが足りません（必要:${cardCost} / 現在:${playerState.pp}）`);
+    return; // モーダル表示せず終了
+  }
+
   const buttons = availableSlots.map(pos => ({
     label: pos.toUpperCase(),
     onClick: () => {
+      // ✅ 手札からの削除（ここで実施）
+      const index = playerState.playerHand.findIndex(c => c.instanceId === card.instanceId);
+      if (index !== -1) {
+        playerState.playerHand.splice(index, 1);
+      }
+
       card.position = pos;
       playerState.field.push(card);
       closeUniversalModal();
       afterCardMoveUpdate("手札", "場");
+      adjustPP(-cardCost)
     }
   }));
 
@@ -867,6 +881,7 @@ function playCardFromHandToField(card, currentZoneName) {
     vertical: false,
     backgroundOpacity: 0.9
   });
+  
 }
 
 // 枚数をカウント
